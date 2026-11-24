@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+<title>CAT Study (Electron)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="barra">
+  <button id="b-abrir">Abrir</button>
+  <span id="nome">sem documento</span>
+  <span id="contador">0/0</span>
+  <button id="b-mesclar">Mesclar</button>
+  <button id="b-dividir">Dividir</button>
+  <span class="esp"></span>
+  <select id="modo"><option value="concordancia">Concordância</option><option value="memoria">Memória</option></select>
+  <input id="busca" placeholder="Buscar (Ctrl+F)">
+</div>
+<div id="resultados" hidden></div>
+<div id="principal">
+  <div id="lista"><div id="lista-in"></div></div>
+  <div id="previa"><div id="previa-in"></div></div>
+</div>
+<div id="rodape"><span id="estado">pronto</span><span id="ultimo"></span></div>
+<div id="modal" hidden><div id="modal-caixa"><p id="modal-txt"></p><p class="dica">Enter = Sim · Esc = Não</p></div></div>
+<script src="renderer.js"></script>
+</body>
+</html>

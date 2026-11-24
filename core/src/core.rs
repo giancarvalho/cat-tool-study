@@ -207,6 +207,18 @@ impl Core {
         Ok(r)
     }
 
+    /// Metadados dos blocos do documento, em ordem (para montar a prévia).
+    pub fn blocos_meta(&self, doc_id: i64) -> Result<Vec<Value>> {
+        let mut st = self.db.prepare_cached("SELECT id, tipo, nivel, meta FROM bloco WHERE doc_id=? ORDER BY ordem")?;
+        let r = st
+            .query_map([doc_id], |r| {
+                let m: String = r.get(3)?;
+                Ok(json!({"id": r.get::<_, i64>(0)?, "tipo": r.get::<_, String>(1)?, "nivel": r.get::<_, i64>(2)?, "meta": serde_json::from_str::<Value>(&m).unwrap_or(Value::Null)}))
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        Ok(r)
+    }
+
     // ---------- edição (R5, R6) ----------
     fn enfileirar(tx: &rusqlite::Transaction, op: &str, seg: i64, versao: i64, payload: Value) -> Result<()> {
         tx.execute(

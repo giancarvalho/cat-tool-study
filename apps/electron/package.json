@@ -1,0 +1,21 @@
+{
+  "name": "catstudy-electron",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "npm run build && electron .",
+    "test": "npm run build && electron . --teste"
+  },
+  "dependencies": {
+    "prosemirror-commands": "1.7.1",
+    "prosemirror-model": "1.25.13",
+    "prosemirror-state": "1.4.4",
+    "prosemirror-view": "1.42.8"
+  },
+  "devDependencies": {
+    "electron": "44.4.5",
+    "esbuild": "0.28.0"
+  }
+}

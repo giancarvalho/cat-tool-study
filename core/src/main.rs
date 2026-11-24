@@ -16,6 +16,7 @@ fn handle(core: &mut Core, metodo: &str, p: &Value) -> anyhow::Result<Value> {
         "segmentos" => serde_json::to_value(core.segmentos(i("doc_id")?, i("de")?, i("n")?)?)?,
         "segmento" => serde_json::to_value(core.segmento(i("id")?)?)?,
         "blocos_do_doc" => json!(core.blocos_do_doc(i("doc_id")?)?),
+        "blocos_meta" => json!(core.blocos_meta(i("doc_id")?)?),
         "blocos" => {
             let ids: Vec<i64> = serde_json::from_value(p.get("ids").cloned().unwrap_or(Value::Null))?;
             serde_json::to_value(core.blocos(&ids)?)?
