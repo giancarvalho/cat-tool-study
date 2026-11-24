@@ -92,3 +92,17 @@ Pendente: decisão sobre a Avalonia (RichTextEditor).
 ## Emenda 2 (2026-11-24, aprovada pelo Gian)
 **Avalonia 12:** editor de segmento será um **controle próprio** (sem RichTextEditor Pro e sem usar o trial). Motivo: o trial (contrato 10C) é só para avaliação interna e omite a publicação de resultados; evita dependência de licença e de resposta da Avalonia. As horas de implementação do controle próprio contam integralmente no critério de esforço. Registrar como limitação no artigo que o RichTextEditor pago não foi avaliado e que o resultado da Avalonia reflete um editor feito pelo estudo, não o do fornecedor. Tabela da seção 2: Avalonia, controle próprio, confirmado.
 Todos os pontos abertos da seção 11 que dependiam de candidato estão resolvidos; seguem abertos 3 e 4 só se o Gian não os considerou aprovados na aprovação geral (considerados aprovados).
+
+## Emenda 3 (2026-11-24, aprovada pelo Gian): protocolo de medição
+Não altera critérios, metas nem pesos. Acrescenta etapas para que as medições da Fase 3 sejam válidas, todas definidas **antes** da primeira medição:
+1. **Corpus real:** carregador TMX no núcleo (UTF-16, pares EN-GB e PT-PT); texto longo = Moby Dick (docs/mobydick.txt, digitalização com ruído de OCR, declarado) convertido em DOCX; layout complexo = CMS-10569 (docx do governo dos EUA) além do modelo da FAA; manifesto com SHA-256.
+2. **Build de produção** empacotado por candidato, versões fixas gravadas em `ambiente.json` (script gerador).
+3. **Orquestrador de rodadas:** ordem dos candidatos sorteada por rodada (semente registrada), 10 repetições (30 em VM) com a primeira descartada, pausa entre execuções, perfis Completo e Restrito (Restrito: 4 núcleos e 8 GB por limite de processo; iGPU por preferência gráfica do Windows), notebook na tomada, modo de energia e temperatura da CPU registrados, estado do Smart App Control registrado.
+4. **M7:** amostragem da memória privada da árvore de processos a cada 60 s pelo harness; M9 e M10 por script.
+5. **M4:** medição independente do app com PresentMon (quadros apresentados pelo sistema operacional), igual para os quatro; complementar à marcação interna de quadro.
+6. **M8 nos dois modos** (concordância e memória) com a TM real. A TM real tem 51 769 pares EN-GB/PT-PT nos arquivos fornecidos (e não 100 mil); o M8 é reportado nesse tamanho, e o tamanho é declarado no artigo.
+7. **Autoteste do harness:** driver contra um aplicativo trivial (Notepad) para medir o piso de ruído do SendInput e o desvio entre relógios; números dos candidatos só valem acima do piso.
+8. **Estatística:** p95 com intervalo de confiança por bootstrap, conforme a seção 6.
+
+## Emenda 4 (2026-11-24, aprovada pelo Gian): PPTX como formato exigido
+Importar **PPTX** passa a ser requisito do protótipo (além de DOCX, XLSX e XLIFF do brief): cada caixa de texto/parágrafo vira um bloco, com a posição (slide e forma) como origem, mesma regra de segmentação. O arquivo de teste é uma apresentação PPTX em `docs/` (596 slides, 500 MB), fornecido pelo Gian, **não versionado** (`docs/` está no .gitignore) e cujo conteúdo não será publicado nem citado no artigo. O Gian disse que esse tipo de documento é comum; a origem (dado próprio ou de cliente) não foi confirmada, e a regra "sem dados de cliente" continua valendo para tudo que for publicado. O esforço de implementar o importador PPTX conta no critério de esforço. Requisito R1 da spec passa a incluir PPTX na v0.2.

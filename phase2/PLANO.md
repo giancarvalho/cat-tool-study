@@ -72,3 +72,6 @@ UI idêntica, sem animações, janela 1440x900, mesmos dados, build de produçã
 1. Núcleo Rust compartilhado via IPC, com mini-spike nativo por linguagem para medir o ecossistema: aprovado (ao aprovar o plano).
 2. Instalações autorizadas e feitas: .NET SDK 10.0.404, pandoc 3.14, Flutter 3.50.1 (Dart 3.14.0, em C:/dev/flutter, fora do PATH). DGT-TM autorizado, baixar no passo B.
 3. Prévia comum de blocos estilizados (parágrafo, título, item de lista, linha de tabela; negrito, itálico, link; tags como chips; sem imagens nem fidelidade de página): aprovada. Limitação a declarar no artigo: a fidelidade ao layout do DOCX não é medida.
+
+## 11. Atualização (2026-11-24): Emendas 3 e 4
+Antes de seguir os candidatos restantes, o núcleo ganha: carregador TMX, importador PPTX e conversão do texto longo; o harness ganha orquestrador, M7, M4 (PresentMon) e autoteste. Ver `PREREGISTRO.md` (Emendas 3 e 4).
