@@ -1,0 +1,45 @@
+{
+ "nome": "T-R6",
+ "descricao": "Mesclar e dividir: contagem cai 1 e volta; tags continuam pareadas.",
+ "doc": "pequeno.docx",
+ "passos": [
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+home",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "tecla",
+   "combo": "alt+down",
+   "atraso_ms": 200
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+m",
+   "atraso_ms": 600
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "dividir",
+   "posicao": 10
+  },
+  {
+   "tipo": "esperar",
+   "ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  }
+ ]
+}

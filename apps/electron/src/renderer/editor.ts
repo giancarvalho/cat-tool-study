@@ -172,6 +172,18 @@ export class Editor {
       this.wordMove(ev.key === "ArrowRight" ? 1 : -1, ev.shiftKey);
       return true;
     }
+    // Seta simples ao lado de uma tag: passa por cima dela como 1 unidade (o ProseMirror, por padrão, só a seleciona).
+    if ((ev.key === "ArrowLeft" || ev.key === "ArrowRight") && !mod && !ev.altKey && !ev.shiftKey) {
+      const { selection, tr } = this.view.state;
+      const dir = ev.key === "ArrowRight" ? 1 : -1;
+      if (selection instanceof TextSelection && selection.empty) {
+        const n = dir === 1 ? selection.$from.nodeAfter : selection.$from.nodeBefore;
+        if (n && n.type === schema.nodes.tag) {
+          this.view.dispatch(tr.setSelection(TextSelection.create(this.view.state.doc, selection.from + dir)).scrollIntoView());
+          return true;
+        }
+      }
+    }
     if (ev.key === "Backspace" || ev.key === "Delete") {
       this.tryDeleteTags(ev.key === "Backspace");
       return this.pendingDelete;

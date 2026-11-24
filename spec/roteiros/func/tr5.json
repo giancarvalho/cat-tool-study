@@ -1,0 +1,53 @@
+{
+ "nome": "T-R5",
+ "descricao": "Confirmar grava versão e fila (+1) e avança; o segmento confirmado ganha versão.",
+ "doc": "pequeno.docx",
+ "passos": [
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+home",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "repetir",
+   "vezes": 5,
+   "passos": [
+    {
+     "tipo": "tecla",
+     "combo": "alt+down",
+     "atraso_ms": 150
+    }
+   ]
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "digitar",
+   "texto": "a",
+   "atraso_ms": 120
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+enter",
+   "atraso_ms": 600
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "alt+up",
+   "atraso_ms": 300
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  }
+ ]
+}

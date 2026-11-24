@@ -253,6 +253,35 @@ async function buscar() {
   aposQuadro((tq) => registrar({ metrica: "M8", passo: "buscar", t_recebe_us: Math.round(t0 * 1000), t_core_us: r.t_core_us, valor: +(tq - t0).toFixed(3), unidade: "ms", erro: modo }));
 }
 
+// ---------- instantâneo de estado para os testes funcionais (Ctrl+Alt+F9) ----------
+// Grava uma linha ESTADO no CSV do app com o estado interno (JSON em percent-encoding, sem vírgulas).
+let seqEstado = 0;
+async function instantaneo() {
+  const ins = ed.getInlines();
+  const st = ed.view.state.selection;
+  const j: any = {
+    active, total: segs.length, head: st.head - 1, anchor: st.anchor - 1, // posição em átomos (0 = início do segmento)
+    modal: !$("modal").hidden,
+    ativoVisivel: active >= 0 ? lista.isVisible(active) : false,
+    editor: ins.map((x: any) => (x.k === "g" ? "<" + (x.tipo === "fecha" ? "/" : "") + x.id + ">" : x.v)).join(""),
+    previaAtivo: active >= 0 ? previa.els.get(blocoIdx.get(segs[active].bloco_id)!)?.textContent ?? null : null,
+    previaOutros: [...previa.els.entries()].filter(([k]) => active < 0 || k !== blocoIdx.get(segs[active].bloco_id)).map(([, e]) => e.textContent).join("|").split("").reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7),
+    resultados: $("resultados").hidden ? "" : $("resultados").innerText.slice(0, 300),
+    fila: (await rpc("fila", { estado: "pendente" })).resultado,
+    contagem: (await rpc("contagem", { doc_id: docId })).resultado,
+    versao: active >= 0 ? segs[active].versao : null,
+    destinoAtivo: active >= 0 ? segs[active].destino.map((x: any) => (x.k === "g" ? "<" + (x.tipo === "fecha" ? "/" : "") + x.id + ">" : x.v)).join("") : null,
+  };
+  registrar({ metrica: "ESTADO", passo: String(seqEstado++), erro: encodeURIComponent(JSON.stringify(j)) });
+  flush();
+}
+window.addEventListener("keydown", (e) => {
+  if (e.ctrlKey && e.altKey && e.key === "F9") {
+    e.preventDefault();
+    void instantaneo();
+  }
+}, true);
+
 // ---------- teclado ----------
 window.addEventListener(
   "keydown",

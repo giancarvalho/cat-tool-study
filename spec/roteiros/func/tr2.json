@@ -1,0 +1,42 @@
+{
+ "nome": "T-R2",
+ "descricao": "10 mil segmentos: Ctrl+End, Ctrl+Home, PgDn; instantâneo após cada passo.",
+ "doc": "pior_caso.docx",
+ "passos": [
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+end",
+   "atraso_ms": 600
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+home",
+   "atraso_ms": 600
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "pgdn",
+   "atraso_ms": 400
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  }
+ ]
+}

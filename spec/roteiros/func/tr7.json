@@ -1,0 +1,24 @@
+{
+ "nome": "T-R7",
+ "descricao": "Busca na memória devolve concordância. TM sintética de 100 mil pares (a TM real entra nas medições).",
+ "doc": "pequeno.docx",
+ "passos": [
+  {
+   "tipo": "buscar",
+   "texto": "system record"
+  },
+  {
+   "tipo": "esperar",
+   "ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  }
+ ],
+ "args_extra": [
+  "--tm-sintetico",
+  "100000"
+ ]
+}

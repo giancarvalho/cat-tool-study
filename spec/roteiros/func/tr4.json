@@ -1,0 +1,52 @@
+{
+ "nome": "T-R4",
+ "descricao": "Uma tecla altera só o bloco certo da prévia.",
+ "doc": "pequeno.docx",
+ "passos": [
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+home",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "repetir",
+   "vezes": 5,
+   "passos": [
+    {
+     "tipo": "tecla",
+     "combo": "alt+down",
+     "atraso_ms": 150
+    }
+   ]
+  },
+  {
+   "tipo": "tecla",
+   "combo": "home",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "tecla",
+   "combo": "right",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "digitar",
+   "texto": "qz",
+   "atraso_ms": 120
+  },
+  {
+   "tipo": "esperar",
+   "ms": 300
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  }
+ ]
+}

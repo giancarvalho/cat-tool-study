@@ -388,8 +388,39 @@ public sealed class MainWindow : Window
     }
 
     // ---------- teclado (tunelamento: antes do controle focado) ----------
+    // ---------- instantâneo de estado para os testes funcionais (Ctrl+Alt+F9) ----------
+    int _seqEstado;
+    static string Marcado(IEnumerable<Inline> v) => string.Concat(v.Select(x => x.IsTag ? "<" + (x.Tipo == "fecha" ? "/" : "") + x.Id + ">" : x.V));
+    static int Hash(string t) { uint h = 7; foreach (var c in t) h = unchecked(h * 31 + c); return (int)h; }
+
+    async Task Instantaneo()
+    {
+        var ativo = _active >= 0 ? _segs[_active] : null;
+        var ed = Ed;
+        bool visivel = false;
+        if (ativo != null && _rows.TryGetValue(ativo, out var row) && row.TranslatePoint(new Point(0, 0), _lista) is { } pt)
+            visivel = pt.Y >= -1 && pt.Y + row.Bounds.Height <= _lista.Bounds.Height + 1;
+        string Texto(TextBlock tb) => string.Concat((tb.Inlines ?? new InlineCollection()).OfType<Run>().Select(r => r.Text));
+        long idAtivo = ativo != null && _blocoSegs.Count > 0 ? ativo.BlocoId : -1;
+        var d = new Dictionary<string, object?>
+        {
+            ["active"] = _active, ["total"] = _segs.Count,
+            ["head"] = ed?.AtomIndex ?? -1, ["modal"] = _modal != null, ["ativoVisivel"] = visivel,
+            ["editor"] = ed != null ? Marcado(ed.GetInlines()) : "",
+            ["previaAtivo"] = _previaTb.TryGetValue(idAtivo, out var tbA) ? Texto(tbA) : null,
+            ["previaOutros"] = Hash(string.Join("|", _previaTb.Where(kv => kv.Key != idAtivo).OrderBy(kv => kv.Key).Select(kv => Texto(kv.Value)))),
+            ["resultados"] = _resultados.IsVisible ? _resultadosTxt.Text : "",
+            ["fila"] = (await _core.Rpc("fila", new { estado = "pendente" })).Resultado.GetInt64(),
+            ["contagem"] = (await _core.Rpc("contagem", new { doc_id = _docId })).Resultado.GetInt64(),
+            ["versao"] = ativo?.Versao, ["destinoAtivo"] = ativo != null ? Marcado(ativo.Destino) : null,
+        };
+        Perf.Registrar(new() { ["metrica"] = "ESTADO", ["passo"] = (_seqEstado++).ToString(), ["erro"] = Uri.EscapeDataString(JsonSerializer.Serialize(d)) });
+        Perf.Flush();
+    }
+
     void AoTeclar(object? sender, KeyEventArgs e)
     {
+        if (e.Key == Key.F9 && e.KeyModifiers.HasFlag(KeyModifiers.Control) && e.KeyModifiers.HasFlag(KeyModifiers.Alt)) { e.Handled = true; _ = Instantaneo(); return; }
         if (_modal != null)
         {
             var k0 = e.Key;

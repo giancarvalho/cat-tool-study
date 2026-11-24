@@ -1,0 +1,123 @@
+{
+ "nome": "T-R3",
+ "descricao": "Tags atômicas: seta atravessa a tag, Backspace pede confirmação, Esc cancela, Enter apaga o par, Esc descarta, Ctrl+Seta para depois da tag.",
+ "doc": "pequeno.docx",
+ "passos": [
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+home",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "repetir",
+   "vezes": 5,
+   "passos": [
+    {
+     "tipo": "tecla",
+     "combo": "alt+down",
+     "atraso_ms": 150
+    }
+   ]
+  },
+  {
+   "tipo": "tecla",
+   "combo": "home",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "right",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "backspace",
+   "atraso_ms": 400
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "esc",
+   "atraso_ms": 300
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "backspace",
+   "atraso_ms": 400
+  },
+  {
+   "tipo": "tecla",
+   "combo": "enter",
+   "atraso_ms": 400
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "esc",
+   "atraso_ms": 300
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "home",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+right",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+right",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+left",
+   "atraso_ms": 250
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  }
+ ]
+}

@@ -91,6 +91,7 @@ fn vk_nome(n: &str) -> Result<u16> {
         "backspace" => 0x08,
         "delete" => 0x2e,
         "tab" => 0x09,
+        s if s.len() >= 2 && s.starts_with('f') && s[1..].parse::<u16>().map_or(false, |n| (1..=12).contains(&n)) => 0x6f + s[1..].parse::<u16>().unwrap(),
         s if s.len() == 1 => s.to_uppercase().as_bytes()[0] as u16,
         s => bail!("tecla desconhecida: {}", s),
     })
