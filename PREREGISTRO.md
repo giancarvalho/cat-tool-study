@@ -114,3 +114,9 @@ Não altera critérios, metas nem pesos; define duas prévias, ambas implementad
 - Exportação com round-trip de tags (DOCX e PPTX) conta no critério de esforço; teste de aceitação novo: exportar sem edição reproduz o texto original, e com edição troca só os segmentos alterados.
 - Diferenças de render entre LibreOffice e Word/PowerPoint são declaradas no artigo. Imagens renderizadas do PPTX privado nunca são capturadas em tela, commitadas nem publicadas (Emenda 4).
 - Teste de carga da prévia rápida (blocos com mais texto e estilos) gera uma segunda curva do M2.
+
+## Emenda 6 (2026-11-24): Avalonia com swap chain DXGI para o M4
+
+**Motivo.** Com a composição padrão do Avalonia 12 no Windows (DirectComposition), o PresentMon não registra nenhum quadro com o PID do app: os quadros saem pelo `dwm.exe`, que atende outras janelas, e o M4 não é separável. Decidido por Gian: tentar DXGI primeiro; se não funcionasse, M4 do Avalonia seria "n/d".
+**Mudança.** `Win32PlatformOptions.CompositionMode = LowLatencyDxgiSwapChain` no `Program.cs` do candidato Avalonia, para todas as métricas (não só o M4). Resultado do teste de validação (1 repetição, não é medição): o PresentMon passa a listar `CatStudyAvalonia.exe` com 547 quadros DXGI na rolagem.
+**Efeito.** Rodadas anteriores do Avalonia (composição padrão) não valem para a análise e serão refeitas. A mudança será declarada no artigo.

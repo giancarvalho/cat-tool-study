@@ -20,5 +20,12 @@ public static class Program
 {
     [STAThread]
     public static int Main(string[] args) =>
-        AppBuilder.Configure<App>().UsePlatformDetect().StartWithClassicDesktopLifetime(args);
+        Construir().StartWithClassicDesktopLifetime(args);
+
+    static AppBuilder Construir()
+    {
+        var b = AppBuilder.Configure<App>().UsePlatformDetect();
+        // Emenda 6: swap chain DXGI própria (a composição padrão apresenta pelo dwm.exe e o PresentMon não atribui os quadros ao app).
+        return b.With(new Win32PlatformOptions { CompositionMode = new[] { Win32CompositionMode.LowLatencyDxgiSwapChain } });
+    }
 }

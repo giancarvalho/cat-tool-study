@@ -48,7 +48,10 @@ def analisar(pm_csv, drv_csv, hz=60.0):
     todas = []
     for r in rd:
         if (r[c_pid] or "").isdigit() and int(r[c_pid]) in pids and r[c_t] not in (None, "", "NA") and r[c_ms] is not None:
-            todas.append((epoch_us(r[c_t]), r))
+            try:
+                todas.append((epoch_us(r[c_t]), r))
+            except ValueError:
+                pass  # última linha truncada ao encerrar o PresentMon
     if not todas:
         return [{"trecho": k, "erro": "nenhum quadro dos processos do candidato no CSV do PresentMon"} for k in range(len(ini))]
     # O PresentMon 2.6 grava CPUStartDateTime com um deslocamento de horas inteiras em relação ao relógio local
