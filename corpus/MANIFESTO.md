@@ -21,4 +21,4 @@ Observação: o gerador cria 'longo' com 3600 segmentos (aprox. 300 páginas) e 
 | Texto corrido longo | Project Gutenberg / U.S. Code | domínio público nos EUA | Gutenberg fora do ar (503) em 2026-11-24; pendente |
 | Memória de tradução 100 mil pares EN-PT | DGT-TM (Comissão Europeia) | reutilização com crédito | pendente (download autorizado pelo Gian) |
 
-Enquanto o DGT-TM não for carregado, os testes usam TM sintética (, semente fixa). Os números de busca (M8) só valem na rodada de medição com a TM real.
+Enquanto o DGT-TM não for carregado, os testes usam TM sintética (método tm_sintetico, semente fixa). Os números de busca (M8) só valem na rodada de medição com a TM real.
