@@ -95,6 +95,7 @@ public sealed class MainWindow : Window
         AddHandler(KeyDownEvent, AoTeclar, RoutingStrategies.Tunnel);
         Opened += async (_, _) =>
         {
+            if (Val("--tmx") is { } pasta) { await _core.Rpc("tm_carregar_tmx", new { pasta, origem = "EN-GB", destino = "PT-PT" }); await _core.Rpc("tm_aquecer"); }
             if (Val("--tm-sintetico") is { } n) { await _core.Rpc("tm_sintetico", new { n = int.Parse(n), semente = 42 }); await _core.Rpc("tm_aquecer"); }
             if (Val("--doc") is { } doc) await AbrirDoc(doc);
         };

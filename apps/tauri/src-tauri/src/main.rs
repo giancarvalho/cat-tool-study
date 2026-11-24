@@ -24,6 +24,7 @@ fn args_do_processo() -> (Value, Option<String>) {
             "script": val("--script"),
             "out": out,
             "tm": val("--tm-sintetico").and_then(|v| v.parse::<i64>().ok()),
+            "tmx": val("--tmx"),
         }),
         out,
     )
@@ -93,6 +94,11 @@ fn main() {
             let mut core = Core::abrir(banco.to_str().unwrap())?;
             if let Some(n) = args_v["tm"].as_i64() {
                 core.tm_sintetico(n as usize, 42)?;
+                core.tm_aquecer()?;
+            }
+            if let Some(pasta) = args_v["tmx"].as_str() {
+                let pares = catcore::tmx::parse_pasta(pasta, "EN-GB", "PT-PT")?;
+                core.tm_inserir(&pares)?;
                 core.tm_aquecer()?;
             }
             app.manage(Estado { core: Mutex::new(core), args: args_v.clone(), out: out.clone() });

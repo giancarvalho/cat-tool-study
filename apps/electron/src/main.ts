@@ -17,6 +17,7 @@ const args = {
   script: val("--script"),
   out: val("--out"),
   tm: val("--tm-sintetico") ? Number(val("--tm-sintetico")) : undefined,
+  tmx: val("--tmx"),
 };
 
 let core: ChildProcessWithoutNullStreams;
@@ -69,6 +70,10 @@ app.whenReady().then(async () => {
   iniciarNucleo();
   if (args.tm) {
     await rpc("tm_sintetico", { n: args.tm, semente: 42 });
+    await rpc("tm_aquecer", {});
+  }
+  if (args.tmx) {
+    await rpc("tm_carregar_tmx", { pasta: args.tmx, origem: "EN-GB", destino: "PT-PT" });
     await rpc("tm_aquecer", {});
   }
   const win = new BrowserWindow({

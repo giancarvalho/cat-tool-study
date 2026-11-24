@@ -82,6 +82,11 @@ class _CatAppState extends State<CatApp> {
       await core.rpc('tm_sintetico', {'n': int.parse(tm), 'semente': 42});
       await core.rpc('tm_aquecer');
     }
+    final tmx = arg('--tmx');
+    if (tmx != null) {
+      await core.rpc('tm_carregar_tmx', {'pasta': tmx, 'origem': 'EN-GB', 'destino': 'PT-PT'});
+      await core.rpc('tm_aquecer');
+    }
     final doc = arg('--doc');
     if (doc != null) await abrirDoc(doc);
   }

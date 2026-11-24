@@ -50,7 +50,7 @@ def verificar(caso, s):
         n0 = s[0]["contagem"]
         ok(s[1]["contagem"] == n0 - 1 and s[1]["total"] == n0 - 1, f"mesclar: contagem {n0} -> {s[1]['contagem']}, lista {s[1]['total']}")
         ok(s[2]["contagem"] == n0 and s[2]["total"] == n0, f"dividir: contagem {s[2]['contagem']}, lista {s[2]['total']} (esperado {n0})")
-    elif caso == "tr7":
+    elif caso in ("tr7", "tr7r"):
         ok(len(s) >= 1, "sem instantâneo")
         r = s[0]["resultados"]
         ok(len(r) > 5 and "sem resultados" not in r, f"sem resultados de concordância: {r[:60]!r}")
@@ -76,7 +76,7 @@ def main():
             if os.path.exists(app_csv):
                 os.remove(app_csv)
             cmd = [c.replace("{doc}", os.path.join(RAIZ, "corpus", "out", doc)).replace("{out}", app_csv) for c in cands[nome]["cmd"]]
-            cmd += spec.get("args_extra", [])
+            cmd += [os.path.join(RAIZ, x) if os.path.isdir(os.path.join(RAIZ, x)) else x for x in spec.get("args_extra", [])]
             cmd[0] = os.path.abspath(os.path.join(RAIZ, cmd[0]))
             dr = [DRIVER, "--roteiro", rot, "--saida", os.path.join(d, "driver.csv"), "--espera-csv", app_csv, "--perfil", "completo", "--"] + cmd
             r = subprocess.run(dr, cwd=RAIZ, capture_output=True, text=True)
