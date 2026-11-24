@@ -1,0 +1,14 @@
+{
+  "name": "catstudy-tauri",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build:web": "node build.mjs",
+    "build": "node build.mjs && cargo build --release --manifest-path src-tauri/Cargo.toml",
+    "bundle": "node build.mjs && tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.12.6",
+    "esbuild": "0.28.0"
+  }
+}

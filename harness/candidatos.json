@@ -1,7 +1,31 @@
 {
   "electron": {
     "versao": "electron 44.4.5 (dev: electron . com dist/ compilado; trocar pelo pacote de producao antes da Fase 3)",
-    "cmd": ["apps/electron/node_modules/electron/dist/electron.exe", "apps/electron", "--limpo", "--doc", "{doc}", "--out", "{out}"],
-    "exes_gpu": ["apps/electron/node_modules/electron/dist/electron.exe"]
+    "cmd": [
+      "apps/electron/node_modules/electron/dist/electron.exe",
+      "apps/electron",
+      "--limpo",
+      "--doc",
+      "{doc}",
+      "--out",
+      "{out}"
+    ],
+    "exes_gpu": [
+      "apps/electron/node_modules/electron/dist/electron.exe"
+    ]
+  },
+  "tauri": {
+    "versao": "tauri 2 (cargo build --release, WebView2 do sistema, sem instalador ainda)",
+    "cmd": [
+      "apps/tauri/src-tauri/target/release/catstudy-tauri.exe",
+      "--limpo",
+      "--doc",
+      "{doc}",
+      "--out",
+      "{out}"
+    ],
+    "exes_gpu": [
+      "apps/tauri/src-tauri/target/release/catstudy-tauri.exe"
+    ]
   }
 }

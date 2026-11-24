@@ -330,6 +330,9 @@ fn main() -> Result<()> {
     esperar(800);
     registrar_memoria("aberto");
     focar(child.id())?;
+    // tecla de aquecimento: algumas cascas (WebView2) descartam a primeira tecla enquanto passam o foco ao conteúdo
+    combo("esc")?; // Esc só descarta o rascunho vazio; serve de tecla de aquecimento
+    esperar(500);
     log.linha("spawn", 0, "", t_spawn);
     log.linha("inicio", 0, "", agora_us());
     let mut cont = 0usize;

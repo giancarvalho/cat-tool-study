@@ -2,7 +2,7 @@
 Uso: python -I harness/juntar.py results/<run>/driver.csv results/<run>/electron.csv [saida.csv]
 Pareamento: cada tecla do driver com a primeira linha do app cujo t_recebe >= t_envio (mesmo relógio de parede, µs).
 Teclas sem resposta em 1 s (ex.: mesclar recusado) são contadas e não pareadas."""
-import csv, statistics, sys
+import bisect, csv, statistics, sys
 
 # passo do driver -> lista de (métrica, passo no app, campo de fim; None = t_recebe + valor interno do app)
 PASSOS = {
@@ -23,20 +23,20 @@ def juntar(driver_csv, app_csv):
         envios = sorted(int(r["t_envio_us"]) for r in drv if r["passo"] == passo)
         for metrica, passo_app, campo in specs:
             linhas = sorted((int(r["t_recebe_us"]), r) for r in app if r["metrica"] == metrica and r["passo"] == passo_app and r["t_recebe_us"])
-            j = 0
-            for t in envios:
-                while j < len(linhas) and linhas[j][0] < t:
-                    j += 1
-                if j >= len(linhas):
-                    sem[(passo, metrica)] = sem.get((passo, metrica), 0) + 1
+            # cada linha do app é atribuída ao último envio anterior a ela; envios sem linha = teclas sem resposta
+            ultimo = -1
+            usados = 0
+            for rec, r in linhas:
+                k = bisect.bisect_right(envios, rec) - 1
+                if k < 0 or k <= ultimo or rec - envios[k] > TOLERANCIA_US:
                     continue
-                rec, r = linhas[j]
-                if rec - t > TOLERANCIA_US:
-                    sem[(passo, metrica)] = sem.get((passo, metrica), 0) + 1
-                    continue
-                j += 1
+                ultimo = k
+                usados += 1
+                t = envios[k]
                 fim = (int(r[campo]) - t) / 1000 if campo and r[campo] else (rec - t) / 1000 + float(r["valor"])
                 saida.append({"passo": passo, "metrica": metrica, "t_envio_us": t, "entrada_ms": round((rec - t) / 1000, 3), "app_ms": r["valor"], "ponta_a_ponta_ms": round(fim, 3)})
+            if len(envios) - usados:
+                sem[(passo, metrica)] = len(envios) - usados
     # M5 (abrir até poder editar) é medido só pelo app
     for r in app:
         if r["metrica"] == "M5":

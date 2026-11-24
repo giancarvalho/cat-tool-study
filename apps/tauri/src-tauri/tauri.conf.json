@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "CAT Study Tauri",
+  "version": "0.1.0",
+  "identifier": "study.cat.tauri",
+  "build": { "frontendDist": "../dist" },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      { "title": "CAT Study (Tauri)", "width": 1440, "height": 900, "resizable": false, "center": true }
+    ],
+    "security": { "csp": null }
+  },
+  "bundle": { "active": false, "icon": ["icons/icon.ico"] }
+}
