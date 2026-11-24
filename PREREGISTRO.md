@@ -84,3 +84,7 @@ Sem dados do cliente. Sem runner self-hosted. Repositório público. Uso de agen
 2. Avalonia: como cobrir o editor (trial com confirmação escrita ou licença Pro).
 3. Leitura do eliminatório de licença (seção 4).
 4. Regras de conversão e definições estatísticas (seções 6 e 8).
+
+## Emenda 1 (2026-11-24, aprovada pelo Gian)
+**Flutter:** mantido como representante, com o **Fleather** como editor. Motivo: o Super Editor tem Windows e Linux com verificação irregular e versão estável antiga (`phase0/fichas.csv`, ficha 22). Risco registrado: Fleather tem bugs abertos de IME em desktop (issues #580, #419, #420) e suporte a chip inline atômico não verificado; se o Fleather não implementar tags atômicas (requisito 3 do protótipo), parar e perguntar ao Gian. A tabela da seção 2 passa a dizer Flutter: Fleather, confirmado.
+Pendente: decisão sobre a Avalonia (RichTextEditor).
