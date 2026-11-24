@@ -88,3 +88,7 @@ Sem dados do cliente. Sem runner self-hosted. Repositório público. Uso de agen
 ## Emenda 1 (2026-11-24, aprovada pelo Gian)
 **Flutter:** mantido como representante, com o **Fleather** como editor. Motivo: o Super Editor tem Windows e Linux com verificação irregular e versão estável antiga (`phase0/fichas.csv`, ficha 22). Risco registrado: Fleather tem bugs abertos de IME em desktop (issues #580, #419, #420) e suporte a chip inline atômico não verificado; se o Fleather não implementar tags atômicas (requisito 3 do protótipo), parar e perguntar ao Gian. A tabela da seção 2 passa a dizer Flutter: Fleather, confirmado.
 Pendente: decisão sobre a Avalonia (RichTextEditor).
+
+## Emenda 2 (2026-11-24, aprovada pelo Gian)
+**Avalonia 12:** editor de segmento será um **controle próprio** (sem RichTextEditor Pro e sem usar o trial). Motivo: o trial (contrato 10C) é só para avaliação interna e omite a publicação de resultados; evita dependência de licença e de resposta da Avalonia. As horas de implementação do controle próprio contam integralmente no critério de esforço. Registrar como limitação no artigo que o RichTextEditor pago não foi avaliado e que o resultado da Avalonia reflete um editor feito pelo estudo, não o do fornecedor. Tabela da seção 2: Avalonia, controle próprio, confirmado.
+Todos os pontos abertos da seção 11 que dependiam de candidato estão resolvidos; seguem abertos 3 e 4 só se o Gian não os considerou aprovados na aprovação geral (considerados aprovados).
