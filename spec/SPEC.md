@@ -1,4 +1,4 @@
-# Especificação funcional comum (v0.1, rascunho)
+# Especificação funcional comum (v0.1, APROVADA pelo Gian em 2026-11-24)
 
 Vale para os quatro candidatos. Mudar esta especificação depois do início da implementação exige registro e aprovação do Gian. Fidelidade: janela 1440x900, sem animações, build de produção, sem devtools, mesmos dados.
 

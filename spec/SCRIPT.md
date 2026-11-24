@@ -1,4 +1,4 @@
-# Roteiro automatizado e log de tempos (v0.1, rascunho)
+# Roteiro automatizado e log de tempos (v0.1, APROVADO pelo Gian em 2026-11-24)
 
 ## 1. Execução
 - O app inicia com `--script spec/roteiros/<nome>.json` e `--out results/<run>/<app>.csv`.
