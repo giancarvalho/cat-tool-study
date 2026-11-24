@@ -33,8 +33,9 @@ def analisar(pm_csv, drv_csv, hz=60.0):
     drv = list(csv.DictReader(open(drv_csv, encoding="utf-8")))
     ini = [int(r["t_envio_us"]) for r in drv if r["passo"] == "roda_inicio"]
     fim = [int(r["t_envio_us"]) for r in drv if r["passo"] == "roda_fim"]
+    spawn = [int(r["t_envio_us"]) for r in drv if r["passo"] == "spawn"]
     pids = {int(x) for r in drv if r["passo"] == "pids" for x in r["tecla"].split(";") if x}
-    rd = csv.DictReader(open(pm_csv, encoding="utf-8"))
+    rd = csv.DictReader(open(pm_csv, encoding="utf-8-sig"))
     h = rd.fieldnames or []
     c_pid = col(h, "ProcessID")
     c_t = col(h, "CPUStartDateTime", "PresentStartDateTime")
@@ -44,14 +45,25 @@ def analisar(pm_csv, drv_csv, hz=60.0):
     falta = [n for n, c in (("ProcessID", c_pid), ("tempo (CPUStartDateTime)", c_t), ("MsBetweenPresents", c_ms)) if c is None]
     if falta:
         raise SystemExit(f"colunas ausentes no CSV do PresentMon: {falta}; colunas: {h}")
+    todas = []
+    for r in rd:
+        if (r[c_pid] or "").isdigit() and int(r[c_pid]) in pids and r[c_t] not in (None, "", "NA") and r[c_ms] is not None:
+            todas.append((epoch_us(r[c_t]), r))
+    if not todas:
+        return [{"trecho": k, "erro": "nenhum quadro dos processos do candidato no CSV do PresentMon"} for k in range(len(ini))]
+    # O PresentMon 2.6 grava CPUStartDateTime com um deslocamento de horas inteiras em relação ao relógio local
+    # (observado: -3 h nesta máquina). Calibra pelo primeiro quadro após o spawn e exige resto < 30 s.
+    todas.sort(key=lambda x: x[0])
+    ref = spawn[0] if spawn else ini[0]
+    resto0 = ref - todas[0][0]
+    horas = round(resto0 / 3.6e9)
+    desloc = horas * 3_600_000_000
+    resto = (resto0 - desloc) / 1e6
+    if abs(resto) > 30:
+        raise SystemExit(f"não foi possível calibrar o relógio do PresentMon: resto {resto:.1f} s após deslocar {horas} h")
     saida = []
     for k, (a, b) in enumerate(zip(ini, fim)):
-        linhas = []
-        for r in rd if k == 0 else csv.DictReader(open(pm_csv, encoding="utf-8")):
-            if int(r[c_pid]) in pids:
-                t = epoch_us(r[c_t])
-                if a <= t <= b:
-                    linhas.append(r)
+        linhas = [r for t, r in todas if a <= t + desloc <= b]
         dur = (b - a) / 1e6
         exibidos = [r for r in linhas if not (c_drop and r[c_drop] == "1") and not (c_ft and r[c_ft] in ("Dropped",))]
         descart = len(linhas) - len(exibidos)
@@ -60,7 +72,8 @@ def analisar(pm_csv, drv_csv, hz=60.0):
         longos = sum(1 for x in ms if x > 1.5 * 1000 / hz)
         saida.append({"trecho": k, "duracao_s": round(dur, 3), "apresentados": len(linhas), "exibidos": len(exibidos), "descartados": descart,
                       "perdidos_pct": round(max(0.0, 1 - len(exibidos) / esperados) * 100, 2) if esperados else None,
-                      "longos_pct": round(100 * longos / len(ms), 2) if ms else None})
+                      "longos_pct": round(100 * longos / len(ms), 2) if ms else None,
+                      "desloc_h": horas, "resto_s": round(resto, 2)})
     return saida
 
 
