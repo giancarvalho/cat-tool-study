@@ -1,0 +1,7 @@
+{
+  "electron": {
+    "versao": "electron 44.4.5 (dev: electron . com dist/ compilado; trocar pelo pacote de producao antes da Fase 3)",
+    "cmd": ["apps/electron/node_modules/electron/dist/electron.exe", "apps/electron", "--limpo", "--doc", "{doc}", "--out", "{out}"],
+    "exes_gpu": ["apps/electron/node_modules/electron/dist/electron.exe"]
+  }
+}

@@ -1,0 +1,8 @@
+app,perfil,documento,metrica,passo,reps,n,p50_ms,p95_ms,ic95_p95_inf,ic95_p95_sup,meta_ms,status
+electron,completo,pequeno.docx,M1,digitar,2,400,4.9,8.24,8.05,8.62,16,atingida
+electron,completo,pequeno.docx,M2,digitar,2,400,4.9,8.24,8.05,8.62,50,atingida
+electron,completo,pequeno.docx,M3,confirmar,2,40,5.09,7.61,6.95,7.7,50,atingida
+electron,completo,pequeno.docx,M5,abrir,2,2,63.0,64.8,61.2,64.8,2000,atingida
+electron,completo,pequeno.docx,M6,dividir,2,10,5.84,7.71,5.83,7.71,100,atingida
+electron,completo,pequeno.docx,M6,mesclar,2,10,6.1,7.51,6.26,7.51,100,atingida
+electron,completo,pequeno.docx,M8,buscar,2,20,4.2,8.2,5.56,8.35,100,atingida

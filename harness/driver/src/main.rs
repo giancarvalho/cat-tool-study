@@ -8,6 +8,11 @@ use std::io::Write;
 use std::process::Command;
 use std::time::{Duration, Instant};
 
+mod extra;
+use extra::{autoteste, limitar, registrar_memoria, CHILD_PID, MEM_LOG};
+use std::sync::atomic::Ordering;
+use std::sync::Mutex;
+
 #[repr(C)]
 struct KeybdInput {
     w_vk: u16,
@@ -229,7 +234,7 @@ fn executar(passos: &[Value], log: &mut Log, cont: &mut usize) -> Result<()> {
                 esperar(atraso);
             }
             "esperar" => esperar(p["ms"].as_u64().unwrap_or(100)),
-            "amostrar_memoria" => {} // feito pelo orquestrador (pendente)
+            "amostrar_memoria" => registrar_memoria(p["rotulo"].as_str().unwrap_or("passo")),
             t => bail!("tipo de passo desconhecido: {}", t),
         }
     }
@@ -275,6 +280,9 @@ fn focar(pid: u32) -> Result<()> {
 fn main() -> Result<()> {
     let a: Vec<String> = std::env::args().collect();
     let v = |n: &str| a.iter().position(|x| x == n).and_then(|i| a.get(i + 1)).cloned();
+    if let Some(n) = v("--autoteste") {
+        return autoteste(n.parse()?, &v("--saida").ok_or_else(|| anyhow!("--saida ausente"))?);
+    }
     let roteiro = v("--roteiro").ok_or_else(|| anyhow!("--roteiro ausente"))?;
     let saida = v("--saida").ok_or_else(|| anyhow!("--saida ausente"))?;
     let esp_csv = v("--espera-csv"); // CSV do app: espera aparecer a linha M5 (abrir)
@@ -287,7 +295,22 @@ fn main() -> Result<()> {
     }
     let mut f = std::fs::File::create(&saida)?;
     writeln!(f, "run_id,passo,indice,tecla,t_envio_us")?;
+    let t_spawn = agora_us();
     let mut child = Command::new(&cmd[0]).args(&cmd[1..]).spawn()?;
+    CHILD_PID.store(child.id(), Ordering::SeqCst);
+    if v("--perfil").as_deref() == Some("restrito") {
+        limitar(child.id(), 0x0F, 8usize << 30)?; // 4 primeiros núcleos lógicos (P-cores) e 8 GB
+    }
+    let mut mf = std::fs::File::create(std::path::Path::new(&saida).with_file_name("memoria.csv"))?;
+    writeln!(mf, "t_us,rotulo,privada_mb,ws_mb,n_processos")?;
+    let _ = MEM_LOG.set(Mutex::new(mf));
+    if let Some(s) = v("--memoria-cada") {
+        let seg: u64 = s.parse()?;
+        std::thread::spawn(move || loop {
+            std::thread::sleep(Duration::from_secs(seg));
+            registrar_memoria("auto");
+        });
+    }
     let mut log = Log { f, run: child.id().to_string() };
     let t0 = Instant::now();
     if let Some(csv) = esp_csv {
@@ -305,11 +328,14 @@ fn main() -> Result<()> {
         esperar(5000);
     }
     esperar(800);
+    registrar_memoria("aberto");
     focar(child.id())?;
+    log.linha("spawn", 0, "", t_spawn);
     log.linha("inicio", 0, "", agora_us());
     let mut cont = 0usize;
     let r = executar(script["passos"].as_array().ok_or_else(|| anyhow!("roteiro sem passos"))?, &mut log, &mut cont);
     log.linha("fim", cont, "", agora_us());
+    registrar_memoria("fim");
     esperar(1000);
     let _ = child.kill();
     r?;

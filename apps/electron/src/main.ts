@@ -28,7 +28,7 @@ function iniciarNucleo() {
   const dir = app.getPath("userData");
   mkdirSync(dir, { recursive: true });
   const banco = path.join(dir, "catstudy.db");
-  if (args.teste) for (const f of [banco, banco + "-wal", banco + "-shm"]) if (existsSync(f)) rmSync(f);
+  if (args.teste || flag("--limpo")) for (const f of [banco, banco + "-wal", banco + "-shm"]) if (existsSync(f)) rmSync(f);
   core = spawn(exe, ["--banco", banco]);
   readline.createInterface({ input: core.stdout }).on("line", (l) => {
     const r = JSON.parse(l);
