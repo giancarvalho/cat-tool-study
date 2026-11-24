@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:fleather/fleather.dart';
@@ -295,12 +296,47 @@ class _CatAppState extends State<CatApp> {
     Perf.aposQuadro((tq) => Perf.linha('M8', 'buscar', t0, tq, erro: modo, tCore: tc));
   }
 
+  // ---------- instantâneo de estado para os testes funcionais (Ctrl+Alt+F9) ----------
+  // A prévia é reconstruída por bloco (ValueListenableBuilder): contamos as construções por bloco para provar
+  // que uma tecla reconstrói só o bloco do segmento ativo.
+  final Map<int, int> construcoes = {};
+  int seqEstado = 0;
+  static String marcado(List<Inline> v) => v.map((x) => x.isTag ? '<${x.tipo == 'fecha' ? '/' : ''}${x.id}>' : x.v).join();
+
+  Future<void> instantaneo() async {
+    final a = active >= 0 && active < segs.length ? segs[active] : null;
+    final idAtivo = a?.blocoId ?? -1;
+    var visivel = false;
+    if (a != null) {
+      for (final p in listaPos.itemPositions.value) {
+        if (p.index == active && p.itemTrailingEdge > 0 && p.itemLeadingEdge < 1) visivel = true;
+      }
+    }
+    final (fila, _) = await core.rpc('fila', {'estado': 'pendente'});
+    final (cont, _) = await core.rpc('contagem', {'doc_id': docId});
+    final d = <String, Object?>{
+      'active': active, 'total': segs.length, 'head': ed?.cursor ?? -1, 'modal': modal != null, 'ativoVisivel': visivel,
+      'editor': ed != null ? marcado(ed!.inlines()) : '',
+      'previaAtivo': a == null ? null : (blocoSegs[idAtivo] ?? const <Seg>[]).map((s) => s.destino.where((x) => !x.isTag).map((x) => x.v).join()).join(' '),
+      'previaOutros': construcoes.entries.where((e) => e.key != idAtivo).fold<int>(0, (h, e) => h * 31 + e.key * 7 + e.value),
+      'resultados': mostraResultados ? resultados : '',
+      'fila': (fila as num).toInt(), 'contagem': (cont as num).toInt(),
+      'versao': a?.versao, 'destinoAtivo': a == null ? null : marcado(a.destino),
+    };
+    Perf.registrar({'metrica': 'ESTADO', 'passo': '${seqEstado++}', 'erro': Uri.encodeComponent(jsonEncode(d))});
+    Perf.flush();
+  }
+
   // ---------- teclado (global: antes do foco, como o tunelamento do Avalonia) ----------
   bool aoTeclar(KeyEvent e) {
     if (e is KeyUpEvent) return false;
     final k = e.logicalKey;
     final hk = HardwareKeyboard.instance;
     final ctrl = hk.isControlPressed || hk.isMetaPressed, shift = hk.isShiftPressed, alt = hk.isAltPressed;
+    if (e is KeyDownEvent && ctrl && alt && k == LogicalKeyboardKey.f9) {
+      instantaneo();
+      return true;
+    }
     if (modal != null) {
       if (k == LogicalKeyboardKey.enter || k == LogicalKeyboardKey.escape || k == LogicalKeyboardKey.keyY || k == LogicalKeyboardKey.keyS || k == LogicalKeyboardKey.keyN) {
         final sim = k == LogicalKeyboardKey.enter || k == LogicalKeyboardKey.keyY || k == LogicalKeyboardKey.keyS;
@@ -496,6 +532,7 @@ class _CatAppState extends State<CatApp> {
     return ValueListenableBuilder<int>(
       valueListenable: blocoVer[b.id]!,
       builder: (_, __, ___) {
+        construcoes[b.id] = (construcoes[b.id] ?? 0) + 1;
         final ativo = active >= 0 && active < segs.length ? segs[active] : null;
         final fonte = b.tipo == 'titulo' ? (b.nivel <= 1 ? 22.0 : b.nivel == 2 ? 18.0 : 16.0) : 14.0;
         final spans = <InlineSpan>[if (b.tipo == 'item_lista') const TextSpan(text: '• ')];

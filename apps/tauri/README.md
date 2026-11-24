@@ -8,6 +8,7 @@
 
 ## Estado (2026-11-24)
 - T-R8 passa: `curto.json` roda até o fim com teclas do sistema (200 digitações, 20 confirmações, 5 mesclar, 5 dividir, 10 buscas), 200 de 200 teclas recebidas.
-- **Pendente:** T-R2 a T-R7 por roteiro `editor_tags.json` com leitura de estado (o executor de testes do Electron usa `sendInputEvent`, específico do Electron); seletor de arquivo (`abrir`); pacote de instalação.
+- T-R2 a T-R7 passam por roteiro (`harness/funcional.py`, instantâneo de estado no Ctrl+Alt+F9).
+- **Pendente:** seletor de arquivo (`abrir`); pacote de instalação.
 - **Achado de harness:** o WebView2 descartou a primeira tecla enviada após focar a janela (o Electron não). O driver agora envia `Esc` de aquecimento para todos os candidatos antes do roteiro.
 - Diferenças de comparação: o Electron roda o núcleo como processo filho (IPC), o Tauri em processo; é a decisão do plano (§3), e o custo de fronteira faz parte do que cada casca oferece.

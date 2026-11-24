@@ -17,3 +17,9 @@ Formato: data, candidato, SO, o que aconteceu, causa, como contornou, tempo gast
 - **Foco após `jumpTo`:** a linha ativa é recriada e o Fleather não reabre a conexão de texto; teclas descartadas. `requestKeyboard` nos quadros seguintes.
 - **`DateTime.now()` de ~15 ms de resolução:** origem do relógio na virada do valor.
 - **Teclado global não bloqueia o Fleather:** apagar/Ctrl+setas exigem `Actions` sobrepondo as intenções do editor.
+
+## Testes funcionais T-R2..T-R7 por roteiro (2026-11-24)
+- **Electron/Tauri (ProseMirror): seta ao lado de uma tag só selecionava a tag.** A primeira seta virava seleção de nó (cursor "escondido") e o texto digitado em seguida se perdia; os outros candidatos passam a tag em um toque. Achado pelo T-R4 por roteiro com teclas do sistema (o executor antigo, com `sendInputEvent`, não pegava). Correção: `Editor.key()` move o cursor por cima da tag (uma unidade). Corrigido nos dois (front-end compartilhado).
+- Método: cada app grava um instantâneo de estado (`ESTADO` no CSV) ao receber Ctrl+Alt+F9; `harness/funcional.py` roda os roteiros de `spec/roteiros/func/` com o driver e confere as afirmações. Resultado: os quatro passam T-R2 a T-R7 (`results/funcional/<app>.json`).
+- A TM do T-R7 é a sintética de 100 mil pares; a TM real (51.769 pares) entra nas medições de M8, e hoje o app ainda não tem argumento de linha de comando para carregar o TMX.
+

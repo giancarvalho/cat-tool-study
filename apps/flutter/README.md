@@ -14,5 +14,5 @@
 4. **Entrada composta:** a conexão de texto padrão do Flutter recebe o acento morto do sistema; não foi testada com `´`+`a` por roteiro (pendente, assim como nos outros).
 
 ## Estado (2026-11-24)
-- T-R8 passa (200 de 200 teclas, M1, M2, M3, M5, M6, M8). T-R3 verificado por fumaça (acima). T-R2 a T-R7 completos por roteiro com leitura de estado: pendentes, como nos outros.
+- T-R8 passa (200 de 200 teclas, M1, M2, M3, M5, M6, M8). T-R3 verificado por fumaça (acima). T-R2 a T-R7 passam por roteiro (`harness/funcional.py`, instantâneo de estado no Ctrl+Alt+F9).
 - Pendente: seletor de arquivo, exportação e prévia compilada (Emenda 5), tamanho do pacote (`build/.../Release`).

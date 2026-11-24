@@ -8,6 +8,7 @@
 
 ## Estado (2026-11-24)
 - T-R8 passa: `curto.json` com teclas do sistema, 200 de 200 teclas, M1, M2, M3, M5, M6, M8 gravados. O dado chega ao SQLite (fila e versões conferidas).
-- **Pendente:** T-R2 a T-R7 por roteiro com leitura de estado; seletor de arquivo; publicação (`dotnet publish`, tamanho do instalador: a pasta de build tem 561 MB porque inclui binários nativos de todas as plataformas; o publish para win-x64 será bem menor); exportação e prévia compilada (Emendas 5).
+- T-R2 a T-R7 passam por roteiro (`harness/funcional.py`, instantâneo de estado no Ctrl+Alt+F9).
+- **Pendente:** seletor de arquivo; publicação (`dotnet publish`, tamanho do instalador: a pasta de build tem 561 MB porque inclui binários nativos de todas as plataformas; o publish para win-x64 será bem menor); exportação e prévia compilada (Emendas 5).
 - **Diferenças de plataforma observadas (uma rodada de validação, não são medição):** início do app maior (JIT, sem ReadyToRun), M8 e M3 com mais cauda (a lista de resultados e a lista virtualizada rodam na thread de interface).
 - **Mudanças da API do Avalonia 12 que custaram tempo:** `GotFocus/LostFocus` passaram a `FocusChangedEventArgs`; a área de transferência saiu de `GetTextAsync` para as extensões `TryGetTextAsync`/`SetTextAsync` em `Avalonia.Input.Platform`.
