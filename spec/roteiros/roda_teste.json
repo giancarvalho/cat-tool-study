@@ -1,0 +1,1 @@
+{"nome":"roda_teste","passos":[{"tipo":"rolar_roda","segundos":2,"notches_por_s":60},{"tipo":"esperar","ms":9000}]}

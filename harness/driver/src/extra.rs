@@ -93,6 +93,37 @@ pub fn memoria_arvore(raiz: u32) -> (f64, f64, usize) {
     }
 }
 
+/// PIDs da árvore de processos do app (para filtrar as linhas do PresentMon).
+pub fn pids_arvore(raiz: u32) -> Vec<u32> {
+    unsafe {
+        let snap = CreateToolhelp32Snapshot(2, 0);
+        if snap == -1 {
+            return vec![raiz];
+        }
+        let mut e: ProcessEntry = std::mem::zeroed();
+        e.size = std::mem::size_of::<ProcessEntry>() as u32;
+        let mut todos: Vec<(u32, u32)> = vec![];
+        let mut ok = Process32FirstW(snap, &mut e);
+        while ok != 0 {
+            todos.push((e.pid, e.parent));
+            ok = Process32NextW(snap, &mut e);
+        }
+        CloseHandle(snap);
+        let mut arvore = vec![raiz];
+        let mut i = 0;
+        while i < arvore.len() {
+            let pai = arvore[i];
+            for (pid, par) in &todos {
+                if *par == pai && !arvore.contains(pid) {
+                    arvore.push(*pid);
+                }
+            }
+            i += 1;
+        }
+        arvore
+    }
+}
+
 pub fn registrar_memoria(rotulo: &str) {
     let pid = CHILD_PID.load(Ordering::SeqCst);
     let (p, w, n) = memoria_arvore(pid);

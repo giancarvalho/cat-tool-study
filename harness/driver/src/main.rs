@@ -9,7 +9,7 @@ use std::process::Command;
 use std::time::{Duration, Instant};
 
 mod extra;
-use extra::{autoteste, limitar, registrar_memoria, CHILD_PID, MEM_LOG};
+use extra::{autoteste, limitar, pids_arvore, registrar_memoria, CHILD_PID, MEM_LOG};
 use std::sync::atomic::Ordering;
 use std::sync::Mutex;
 
@@ -40,6 +40,8 @@ extern "system" {
     fn SetForegroundWindow(h: isize) -> i32;
     fn GetForegroundWindow() -> isize;
     fn keybd_event(vk: u8, scan: u8, flags: u32, extra: usize);
+    fn GetWindowRect(h: isize, r: *mut [i32; 4]) -> i32;
+    fn SetCursorPos(x: i32, y: i32) -> i32;
 }
 #[link(name = "kernel32")]
 extern "system" {
@@ -156,6 +158,26 @@ fn caractere(ch: char) -> u64 {
     t
 }
 
+#[repr(C)]
+struct MouseInput {
+    dx: i32,
+    dy: i32,
+    data: u32,
+    flags: u32,
+    time: u32,
+    extra: usize,
+}
+#[repr(C)]
+struct InputMouse {
+    kind: u32,
+    _pad: u32,
+    mi: MouseInput,
+}
+fn roda(delta: i32) {
+    let i = InputMouse { kind: 0, _pad: 0, mi: MouseInput { dx: 0, dy: 0, data: delta as u32, flags: 0x0800, time: 0, extra: 0 } };
+    unsafe { SendInput(1, &i as *const InputMouse as *const Input, std::mem::size_of::<InputMouse>() as i32) };
+}
+
 fn esperar(ms: u64) {
     std::thread::sleep(Duration::from_millis(ms));
 }
@@ -234,6 +256,34 @@ fn executar(passos: &[Value], log: &mut Log, cont: &mut usize) -> Result<()> {
                 esperar(atraso);
             }
             "esperar" => esperar(p["ms"].as_u64().unwrap_or(100)),
+            "rolar_roda" => {
+                // rolagem contínua por roda do mouse sobre a lista (M4): `notches_por_s` eventos por segundo durante `segundos`
+                let seg = p["segundos"].as_f64().unwrap_or(5.0);
+                let hz = p["notches_por_s"].as_f64().unwrap_or(60.0);
+                let delta: i32 = if p["direcao"].as_str() == Some("cima") { 120 } else { -120 };
+                let mut r = [0i32; 4];
+                unsafe {
+                    GetWindowRect(ALVO_HWND, &mut r);
+                    SetCursorPos(r[0] + (r[2] - r[0]) * 3 / 10, r[1] + (r[3] - r[1]) / 2); // sobre a lista (60% esquerdos)
+                }
+                esperar(200);
+                let t0 = agora_us();
+                log.linha("roda_inicio", *cont, "", t0);
+                let passo_us = (1_000_000.0 / hz) as u64;
+                let total = (seg * hz) as u64;
+                for k in 0..total {
+                    let alvo = t0 + k * passo_us;
+                    while agora_us() < alvo {
+                        std::hint::spin_loop();
+                    }
+                    roda(delta);
+                }
+                log.linha("roda_fim", *cont, "", agora_us());
+                let pids: Vec<String> = pids_arvore(CHILD_PID.load(Ordering::SeqCst)).iter().map(|x| x.to_string()).collect();
+                log.linha("pids", *cont, &pids.join(";"), agora_us());
+                *cont += 1;
+                esperar(espera(300));
+            }
             "amostrar_memoria" => registrar_memoria(p["rotulo"].as_str().unwrap_or("passo")),
             t => bail!("tipo de passo desconhecido: {}", t),
         }

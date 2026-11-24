@@ -1,0 +1,8 @@
+{
+  "nome": "rolagem",
+  "descricao": "M4: rolagem contínua por roda do mouse sobre a lista, 60 eventos por segundo, 5 s para baixo e 5 s para cima, medida por PresentMon (harness/m4.py).",
+  "passos": [
+    { "tipo": "rolar_roda", "segundos": 5, "notches_por_s": 60, "direcao": "baixo" },
+    { "tipo": "rolar_roda", "segundos": 5, "notches_por_s": 60, "direcao": "cima" }
+  ]
+}

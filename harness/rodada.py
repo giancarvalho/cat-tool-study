@@ -11,6 +11,7 @@ from juntar import juntar  # noqa: E402
 import ambiente  # noqa: E402
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PRESENTMON = os.path.join(RAIZ, "harness", "tools", "PresentMon-2.6.0-x64.exe")
 DRIVER = os.path.join(RAIZ, "harness", "driver", "target", "release", "catdriver.exe")
 COLS = ["rodada", "app", "perfil", "documento", "repeticao", "aquecimento", "metrica", "passo", "valor_ms", "entrada_ms"]
 
@@ -60,6 +61,7 @@ def main():
     ap.add_argument("--pausa", type=int, default=15)
     ap.add_argument("--gpu", choices=["integrada", "nvidia", ""], default="")
     ap.add_argument("--memoria-cada", default="")
+    ap.add_argument("--presentmon", action="store_true", help="captura o PresentMon (M4); exige privilégio elevado ou o grupo Performance Log Users")
     a = ap.parse_args()
 
     cands = json.load(open(os.path.join(RAIZ, a.candidatos), encoding="utf-8"))
@@ -97,7 +99,20 @@ def main():
                 if a.memoria_cada:
                     dr += ["--memoria-cada", a.memoria_cada]
                 print(f"[rep {rep}/{a.reps}] {nome} ...", flush=True)
+                pm = None
+                if a.presentmon:
+                    pm = subprocess.Popen([PRESENTMON, "--output_file", os.path.join(d, "presentmon.csv"), "--no_console_stats", "--date_time", "--stop_existing_session", "--session_name", "catstudy"], cwd=RAIZ, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                    time.sleep(2)
+                    if pm.poll() is not None:
+                        print("  PresentMon não iniciou:", pm.stdout.read().strip()[:300])
+                        pm = None
                 r = subprocess.run(dr + ["--"] + cmd, cwd=RAIZ, capture_output=True, text=True)
+                if pm is not None:
+                    pm.terminate()
+                    try:
+                        pm.wait(10)
+                    except Exception:
+                        pm.kill()
                 if r.returncode != 0:
                     print("  FALHOU:", (r.stderr or r.stdout).strip()[:300])
                     continue
