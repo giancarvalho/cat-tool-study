@@ -94,6 +94,8 @@ class _CatAppState extends State<CatApp> {
   static String acharNucleo() {
     final env = Platform.environment['CATCORE'];
     if (env != null && env.isNotEmpty) return env;
+    final aoLado = '${File(Platform.resolvedExecutable).parent.path}\\catcore.exe';
+    if (File(aoLado).existsSync()) return aoLado;
     for (var d = File(Platform.resolvedExecutable).parent; d.parent.path != d.path; d = d.parent) {
       final p = '${d.path}\\core\\target\\release\\catcore.exe';
       if (File(p).existsSync()) return p;

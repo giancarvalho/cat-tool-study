@@ -105,6 +105,8 @@ public sealed class MainWindow : Window
     {
         var env = Environment.GetEnvironmentVariable("CATCORE");
         if (!string.IsNullOrEmpty(env)) return env;
+        var aoLado = Path.Combine(AppContext.BaseDirectory, "catcore.exe");
+        if (File.Exists(aoLado)) return aoLado;
         for (var d = new DirectoryInfo(AppContext.BaseDirectory); d != null; d = d.Parent)
         {
             var p = Path.Combine(d.FullName, "core", "target", "release", "catcore.exe");

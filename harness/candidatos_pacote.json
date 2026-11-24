@@ -1,0 +1,58 @@
+{
+  "electron": {
+    "versao": "electron 44.4.5 — pacote portátil em dist-pacotes (sem instalador)",
+    "cmd": [
+      "dist-pacotes/electron/catstudy-electron.exe",
+      "--limpo",
+      "--doc",
+      "{doc}",
+      "--out",
+      "{out}"
+    ],
+    "exes_gpu": [
+      "dist-pacotes/electron/catstudy-electron.exe"
+    ]
+  },
+  "tauri": {
+    "versao": "tauri 2 — pacote portátil em dist-pacotes (sem instalador)",
+    "cmd": [
+      "dist-pacotes/tauri/catstudy-tauri.exe",
+      "--limpo",
+      "--doc",
+      "{doc}",
+      "--out",
+      "{out}"
+    ],
+    "exes_gpu": [
+      "dist-pacotes/tauri/catstudy-tauri.exe"
+    ]
+  },
+  "avalonia": {
+    "versao": "avalonia 12.2.0 — pacote portátil em dist-pacotes (sem instalador)",
+    "cmd": [
+      "dist-pacotes/avalonia/CatStudyAvalonia.exe",
+      "--limpo",
+      "--doc",
+      "{doc}",
+      "--out",
+      "{out}"
+    ],
+    "exes_gpu": [
+      "dist-pacotes/avalonia/CatStudyAvalonia.exe"
+    ]
+  },
+  "flutter": {
+    "versao": "flutter 3.50.1 — pacote portátil em dist-pacotes (sem instalador)",
+    "cmd": [
+      "dist-pacotes/flutter/catstudy.exe",
+      "--limpo",
+      "--doc",
+      "{doc}",
+      "--out",
+      "{out}"
+    ],
+    "exes_gpu": [
+      "dist-pacotes/flutter/catstudy.exe"
+    ]
+  }
+}

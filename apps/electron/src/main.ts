@@ -25,7 +25,9 @@ let nextId = 1;
 const pend = new Map<number, (r: any) => void>();
 
 function iniciarNucleo() {
-  const exe = process.env.CATCORE || path.resolve(__dirname, "../../../core/target/release/catcore.exe");
+  // pacote: catcore.exe ao lado do executável; desenvolvimento: core/target/release
+  const ao_lado = path.join(path.dirname(process.execPath), "catcore.exe");
+  const exe = process.env.CATCORE || (existsSync(ao_lado) ? ao_lado : path.resolve(__dirname, "../../../core/target/release/catcore.exe"));
   const dir = app.getPath("userData");
   mkdirSync(dir, { recursive: true });
   const banco = path.join(dir, "catstudy.db");
