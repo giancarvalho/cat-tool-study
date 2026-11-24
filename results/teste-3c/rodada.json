@@ -1,0 +1,27 @@
+{
+  "semente": 3,
+  "commit": "c5394182f06f0082fe49dbdf5661f68f0b3b059d",
+  "arvore_suja": true,
+  "doc": "corpus/out/pequeno.docx",
+  "perfil": "completo",
+  "reps": 3,
+  "roteiro": "spec/roteiros/curto.json",
+  "gpu": "",
+  "ordens": [
+    [
+      "tauri",
+      "avalonia",
+      "electron"
+    ],
+    [
+      "electron",
+      "avalonia",
+      "tauri"
+    ],
+    [
+      "tauri",
+      "electron",
+      "avalonia"
+    ]
+  ]
+}

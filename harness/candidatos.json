@@ -27,5 +27,19 @@
     "exes_gpu": [
       "apps/tauri/src-tauri/target/release/catstudy-tauri.exe"
     ]
+  },
+  "avalonia": {
+    "versao": "avalonia 12.2.0, net10.0, Release framework-dependent (sem publish ainda)",
+    "cmd": [
+      "apps/avalonia/bin/Release/net10.0/CatStudyAvalonia.exe",
+      "--limpo",
+      "--doc",
+      "{doc}",
+      "--out",
+      "{out}"
+    ],
+    "exes_gpu": [
+      "apps/avalonia/bin/Release/net10.0/CatStudyAvalonia.exe"
+    ]
   }
 }
