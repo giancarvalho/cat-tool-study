@@ -31,6 +31,7 @@ pub fn handle(core: &mut Core, metodo: &str, p: &Value) -> anyhow::Result<Value>
             let pares = crate::tmx::parse_pasta(&s("pasta")?, &s("origem")?, &s("destino")?)?;
             json!({"pares": pares.len(), "total": core.tm_inserir(&pares)?})
         }
+        "exportar" => core.exportar(i("doc_id")?, &s("saida")?)?,
         "tm_aquecer" => json!(core.tm_aquecer()?),
         "fila" => json!(core.fila(&s("estado")?)?),
         m => return Err(anyhow::anyhow!("método desconhecido: {}", m)),
