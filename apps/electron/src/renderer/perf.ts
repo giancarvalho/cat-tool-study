@@ -25,11 +25,16 @@ export function aposQuadro(fn: (t: number) => void) {
   requestAnimationFrame(() => requestAnimationFrame(() => fn(now())));
 }
 
+// Os instantes saem em tempo de parede UTC (µs), o mesmo relógio do driver (spec/SCRIPT.md §1).
+const ORIGEM_US = performance.timeOrigin * 1000;
+const CAMPOS_T = ["t_recebe_us", "t_editor_us", "t_previa_us"];
 export function registrar(row: Record<string, unknown>) {
+  for (const c of CAMPOS_T) if (typeof row[c] === "number") row[c] = Math.round((row[c] as number) + ORIGEM_US);
   buf.push(row);
   if (buf.length >= 200) flush();
 }
 export function flush() {
   if (buf.length) window.cat.log(buf.splice(0, buf.length));
 }
+setInterval(flush, 500); // não perder linhas quando o driver encerra o app
 export const registrosPendentes = () => buf.length;

@@ -1,0 +1,23 @@
+{
+  "nome": "curto",
+  "descricao": "Valida o app: 200 teclas digitadas, 20 confirmações, 3 rolagens, 5 mesclar/dividir, 10 buscas (spec/SCRIPT.md §3).",
+  "passos": [
+    { "tipo": "abrir", "documento": "pequeno.docx" },
+    { "tipo": "repetir", "vezes": 20, "passos": [
+      { "tipo": "digitar", "texto": "abcdefghij", "atraso_ms": 80 },
+      { "tipo": "confirmar" }
+    ] },
+    { "tipo": "repetir", "vezes": 3, "passos": [
+      { "tipo": "rolar", "quadros": 10, "direcao": "baixo", "atraso_ms": 100 },
+      { "tipo": "esperar", "ms": 300 }
+    ] },
+    { "tipo": "tecla", "combo": "ctrl+home" },
+    { "tipo": "repetir", "vezes": 5, "passos": [
+      { "tipo": "mesclar" },
+      { "tipo": "dividir", "posicao": 10 }
+    ] },
+    { "tipo": "repetir", "vezes": 10, "passos": [
+      { "tipo": "buscar", "texto": "system record" }
+    ] }
+  ]
+}
