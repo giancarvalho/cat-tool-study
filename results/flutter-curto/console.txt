@@ -1,0 +1,2 @@
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(127)] Using the Impeller rendering backend (OpenGLESSDF).
+driver: 272 eventos de tecla registrados em results/flutter-curto/driver.csv

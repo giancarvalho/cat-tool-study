@@ -1,0 +1,12 @@
+{
+  "nome": "tag_fumaca",
+  "descricao": "Fumaça de T-R3: no segmento 6 (começa com tag de abertura), Delete pede confirmação, Enter confirma e apaga a abertura e a fechadora pareada; Ctrl+Enter grava. Conferir no SQLite que o destino do segmento 6 ficou sem tags.",
+  "passos": [
+    { "tipo": "tecla", "combo": "ctrl+home" },
+    { "tipo": "repetir", "vezes": 5, "passos": [ { "tipo": "tecla", "combo": "alt+down", "atraso_ms": 150 } ] },
+    { "tipo": "tecla", "combo": "home" },
+    { "tipo": "tecla", "combo": "delete", "atraso_ms": 400 },
+    { "tipo": "tecla", "combo": "enter", "atraso_ms": 400 },
+    { "tipo": "confirmar", "espera_ms": 800 }
+  ]
+}

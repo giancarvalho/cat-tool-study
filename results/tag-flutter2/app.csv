@@ -1,0 +1,5 @@
+run_id,app,metrica,passo,t_recebe_us,t_editor_us,t_previa_us,t_core_us,valor,unidade,erro
+35892,flutter,M5,abrir,1795542667905449,,,,332.0,ms,pequeno.docx
+35892,flutter,M1,digitar,1795542671181416,1795542671190982,,,9.566,ms,
+35892,flutter,M2,digitar,1795542671181416,,1795542671190982,,9.566,ms,
+35892,flutter,M3,confirmar,1795542671278691,,,225,10.954,ms,

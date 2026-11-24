@@ -1,0 +1,30 @@
+{
+  "semente": 4,
+  "commit": "78f14e2e1dcea790dfdab755e9f2270173792dae",
+  "arvore_suja": true,
+  "doc": "corpus/out/pequeno.docx",
+  "perfil": "completo",
+  "reps": 3,
+  "roteiro": "spec/roteiros/curto.json",
+  "gpu": "",
+  "ordens": [
+    [
+      "avalonia",
+      "electron",
+      "flutter",
+      "tauri"
+    ],
+    [
+      "avalonia",
+      "electron",
+      "tauri",
+      "flutter"
+    ],
+    [
+      "tauri",
+      "avalonia",
+      "flutter",
+      "electron"
+    ]
+  ]
+}

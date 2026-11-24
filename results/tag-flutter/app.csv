@@ -1,0 +1,3 @@
+run_id,app,metrica,passo,t_recebe_us,t_editor_us,t_previa_us,t_core_us,valor,unidade,erro
+31720,flutter,M5,abrir,1795542653807123,,,,364.13,ms,pequeno.docx
+31720,flutter,M3,confirmar,1795542657773468,,,183,16.616,ms,

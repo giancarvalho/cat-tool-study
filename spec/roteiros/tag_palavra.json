@@ -1,0 +1,12 @@
+{
+  "nome": "tag_palavra",
+  "descricao": "Fumaça de T-R3 (navegação): no segmento 6, Home, Ctrl+Direita atravessa a tag de abertura (limite de palavra), digitar X deve ficar logo depois dela; Ctrl+Enter grava. Esperado: [tag b][texto 'XSystem local rule'][tag /b]...",
+  "passos": [
+    { "tipo": "tecla", "combo": "ctrl+home" },
+    { "tipo": "repetir", "vezes": 5, "passos": [ { "tipo": "tecla", "combo": "alt+down", "atraso_ms": 150 } ] },
+    { "tipo": "tecla", "combo": "home" },
+    { "tipo": "tecla", "combo": "ctrl+right", "atraso_ms": 200 },
+    { "tipo": "digitar", "texto": "X" },
+    { "tipo": "confirmar", "espera_ms": 800 }
+  ]
+}

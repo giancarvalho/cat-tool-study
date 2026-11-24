@@ -41,5 +41,19 @@
     "exes_gpu": [
       "apps/avalonia/bin/Release/net10.0/CatStudyAvalonia.exe"
     ]
+  },
+  "flutter": {
+    "versao": "flutter 3.50.1, dart 3.14.0, fleather 1.28.0 (flutter build windows --release)",
+    "cmd": [
+      "apps/flutter/build/windows/x64/runner/Release/catstudy.exe",
+      "--limpo",
+      "--doc",
+      "{doc}",
+      "--out",
+      "{out}"
+    ],
+    "exes_gpu": [
+      "apps/flutter/build/windows/x64/runner/Release/catstudy.exe"
+    ]
   }
 }

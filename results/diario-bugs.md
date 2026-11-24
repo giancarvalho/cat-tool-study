@@ -11,3 +11,9 @@ Formato: data, candidato, SO, o que aconteceu, causa, como contornou, tempo gast
 ## Tauri e Avalonia (2026-11-24)
 - **Tauri/WebView2:** descartava a primeira tecla após o foco da janela (o Electron não). Contornado no driver com `Esc` de aquecimento para todos.
 - **Avalonia 12:** `GotFocusEventArgs`/`RoutedEventArgs` de foco trocados por `FocusChangedEventArgs`; clipboard (`SetTextAsync`/`TryGetTextAsync` agora extensões em `Avalonia.Input.Platform`). A pasta de build tem os nativos de todas as plataformas.
+
+## Flutter (2026-11-24)
+- **Fleather `scrollable: false`:** `Bad state: No element` em `bringIntoView` ao usar Home/setas verticais; altura limitada e `scrollable: true`.
+- **Foco após `jumpTo`:** a linha ativa é recriada e o Fleather não reabre a conexão de texto; teclas descartadas. `requestKeyboard` nos quadros seguintes.
+- **`DateTime.now()` de ~15 ms de resolução:** origem do relógio na virada do valor.
+- **Teclado global não bloqueia o Fleather:** apagar/Ctrl+setas exigem `Actions` sobrepondo as intenções do editor.
