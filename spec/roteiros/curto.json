@@ -12,6 +12,7 @@
       { "tipo": "esperar", "ms": 300 }
     ] },
     { "tipo": "tecla", "combo": "ctrl+home" },
+    { "tipo": "tecla", "combo": "alt+down" },
     { "tipo": "repetir", "vezes": 5, "passos": [
       { "tipo": "mesclar" },
       { "tipo": "dividir", "posicao": 10 }

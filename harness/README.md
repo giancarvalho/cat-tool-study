@@ -14,6 +14,6 @@ python -I harness/juntar.py results/run/driver.csv results/run/electron.csv resu
 - Passos implementados: `abrir` (feito pelo app via `--doc`), `digitar`, `confirmar`, `mesclar`, `dividir`, `rolar` (PgUp/PgDn), `buscar`, `tecla`, `esperar`, `repetir`. Pendentes: `amostrar_memoria` (M7), medição de quadros perdidos (M4), escolha do modo de busca (concordância/memória).
 
 ## Limitações conhecidas
-- O `curto.json` assume que o segmento 0 e o 1 podem estar em blocos diferentes: o primeiro `mesclar` é recusado pelo app (1 de 5) e o `dividir` seguinte divide o segmento 0. Para a medição, o roteiro deve escolher um par do mesmo bloco por posição.
+- O `curto.json` vai ao segmento 1 (Ctrl+Home, Alt+↓) porque o 0 está sozinho no bloco; os 5 mesclar e 5 dividir passam (corrigido). Em outros documentos o par do mesmo bloco muda de posição.
 - Layout de teclado: `VkKeyScanW` usa o layout ativo; o texto dos roteiros é ASCII.
 - Linux (xdotool/ydotool) e macOS (AppleScript) ficam para a Etapa 2.
