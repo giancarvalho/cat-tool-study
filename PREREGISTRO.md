@@ -106,3 +106,11 @@ Não altera critérios, metas nem pesos. Acrescenta etapas para que as mediçõe
 
 ## Emenda 4 (2026-11-24, aprovada pelo Gian): PPTX como formato exigido
 Importar **PPTX** passa a ser requisito do protótipo (além de DOCX, XLSX e XLIFF do brief): cada caixa de texto/parágrafo vira um bloco, com a posição (slide e forma) como origem, mesma regra de segmentação. O arquivo de teste é uma apresentação PPTX em `docs/` (596 slides, 500 MB), fornecida pelo Gian, **não versionado** (`docs/` está no .gitignore) e cujo conteúdo não será publicado nem citado no artigo. O Gian disse que esse tipo de documento é comum; o Gian autorizou o uso do arquivo nas medições (2026-11-24), com a condição de que o conteúdo não seja citado nem publicado. O esforço de implementar o importador PPTX conta no critério de esforço. Requisito R1 da spec passa a incluir PPTX na v0.2.
+
+## Emenda 5 (2026-11-24, aprovada pelo Gian): prévia dupla
+Não altera critérios, metas nem pesos; define duas prévias, ambas implementadas nos quatro candidatos:
+1. **Prévia rápida (aproximada):** blocos estilizados atualizados por tecla. É a que o M2 mede (tecla até prévia atualizada, meta < 50 ms). Não reproduz layout, fontes, tabelas nem paginação; declarar no artigo.
+2. **Prévia compilada (documento real), sob demanda ou ao ficar ocioso (debounce):** o núcleo exporta o documento (DOCX e PPTX) com os destinos dos segmentos, um motor externo comum (LibreOffice headless, **instalação a autorizar pelo Gian**) converte em PDF/imagens, e cada casca exibe o resultado. Nova métrica **M11: pedido de visualização até a página aparecer**, registrar mediana e p95, sem meta; separar tempo de exportação, de renderização (igual nos quatro) e de exibição (o que depende da casca).
+- Exportação com round-trip de tags (DOCX e PPTX) conta no critério de esforço; teste de aceitação novo: exportar sem edição reproduz o texto original, e com edição troca só os segmentos alterados.
+- Diferenças de render entre LibreOffice e Word/PowerPoint são declaradas no artigo. Imagens renderizadas do PPTX privado nunca são capturadas em tela, commitadas nem publicadas (Emenda 4).
+- Teste de carga da prévia rápida (blocos com mais texto e estilos) gera uma segunda curva do M2.
