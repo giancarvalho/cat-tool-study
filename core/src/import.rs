@@ -250,6 +250,103 @@ pub fn parse_docx(path: &str) -> Result<Vec<ParsedBlock>> {
     Ok(out)
 }
 
+/// PPTX (Emenda 4): cada parágrafo `a:p` de cada forma/célula de `ppt/slides/slideN.xml` vira um bloco;
+/// negrito e itálico viram tags como no DOCX. Slides em ordem numérica do nome do arquivo (premissa do
+/// protótipo, como no XLSX). Notas do orador, layouts e mestres ficam fora do protótipo.
+pub fn parse_pptx(path: &str) -> Result<Vec<ParsedBlock>> {
+    let f = std::fs::File::open(path)?;
+    let mut z = zip::ZipArchive::new(f)?;
+    let mut slides: Vec<(u32, String)> = z
+        .file_names()
+        .filter_map(|n| {
+            let r = n.strip_prefix("ppt/slides/slide")?.strip_suffix(".xml")?;
+            Some((r.parse::<u32>().ok()?, n.to_string()))
+        })
+        .collect();
+    slides.sort();
+    let mut out = Vec::new();
+    for (num, part) in slides {
+        let mut xml = Vec::new();
+        z.by_name(&part)?.read_to_end(&mut xml)?;
+        let mut rd = Reader::from_reader(xml.as_slice());
+        rd.config_mut().trim_text(false);
+        let mut buf = Vec::new();
+        let mut par: Option<Par> = None;
+        let mut ids: Vec<u32> = vec![];
+        let (mut in_t, mut run_fmt) = (false, (false, false));
+        let (mut forma_id, mut forma_nome, mut titulo) = (String::new(), String::new(), false);
+        let (mut idx_forma, mut idx_par) = (0usize, 0usize);
+        loop {
+            let ev = rd.read_event_into(&mut buf)?;
+            match &ev {
+                Event::Start(e) | Event::Empty(e) => {
+                    let is_start = matches!(ev, Event::Start(_));
+                    match e.local_name().as_ref() {
+                        b"sp" | b"graphicFrame" | b"pic" if is_start => {
+                            idx_forma += 1;
+                            idx_par = 0;
+                            titulo = false;
+                        }
+                        b"cNvPr" => {
+                            forma_id = attr(e, b"id").unwrap_or_default();
+                            forma_nome = attr(e, b"name").unwrap_or_default();
+                        }
+                        b"ph" => titulo = matches!(attr(e, b"type").as_deref(), Some("title") | Some("ctrTitle")),
+                        b"p" if is_start => {
+                            par = Some(Par::new());
+                            ids.clear();
+                        }
+                        b"r" if is_start => run_fmt = (false, false),
+                        b"rPr" => {
+                            let on = |n: &[u8]| matches!(attr(e, n).as_deref(), Some("1") | Some("true"));
+                            run_fmt = (on(b"b"), on(b"i"));
+                        }
+                        b"t" if is_start => in_t = true,
+                        b"br" => {
+                            if let Some(p) = par.as_mut() {
+                                let id = p.id();
+                                p.atoms.push(Atom::Tag(id, TagTipo::Vazia, "br".into()));
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+                Event::Text(t) if in_t => {
+                    if let Some(p) = par.as_mut() {
+                        let s = t.unescape()?.into_owned();
+                        p.text(&s, run_fmt, &mut ids);
+                    }
+                }
+                Event::End(e) => match e.local_name().as_ref() {
+                    b"t" => in_t = false,
+                    b"p" => {
+                        if let Some(mut p) = par.take() {
+                            let mut fids = std::mem::take(&mut ids);
+                            p.transition((false, false), &mut fids);
+                            if p.has_text() {
+                                out.push(ParsedBlock {
+                                    tipo: if titulo { "titulo" } else { "forma" }.into(),
+                                    nivel: 0,
+                                    meta: json!({"slide": num, "forma_id": forma_id, "forma": forma_nome}),
+                                    parte: part.clone(),
+                                    caminho: format!("slide{}/forma[{}]/p[{}]", num, idx_forma, idx_par),
+                                    atoms: p.atoms,
+                                });
+                            }
+                            idx_par += 1;
+                        }
+                    }
+                    _ => {}
+                },
+                Event::Eof => break,
+                _ => {}
+            }
+            buf.clear();
+        }
+    }
+    Ok(out)
+}
+
 fn parse_shared_strings(path: &str) -> Result<Vec<String>> {
     let Some(xml) = read_zip_entry(path, "xl/sharedStrings.xml")? else { return Ok(vec![]) };
     let mut rd = Reader::from_reader(xml.as_slice());

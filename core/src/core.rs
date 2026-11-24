@@ -1,5 +1,5 @@
 //! Operações do núcleo: SQLite, importação, edição, fila de sync e busca (spec §3, §5).
-use crate::import::{parse_docx, parse_xlsx, ParsedBlock};
+use crate::import::{parse_docx, parse_pptx, parse_xlsx, ParsedBlock};
 use crate::model::*;
 use anyhow::{anyhow, Result};
 use rusqlite::{params, Connection, OptionalExtension};
@@ -119,6 +119,8 @@ impl Core {
             ("docx", parse_docx(caminho)?)
         } else if lower.ends_with(".xlsx") {
             ("xlsx", parse_xlsx(caminho)?)
+        } else if lower.ends_with(".pptx") {
+            ("pptx", parse_pptx(caminho)?)
         } else {
             return Err(anyhow!("formato não suportado: {}", caminho));
         };

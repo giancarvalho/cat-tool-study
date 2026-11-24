@@ -29,6 +29,10 @@ fn handle(core: &mut Core, metodo: &str, p: &Value) -> anyhow::Result<Value> {
         "dividir" => serde_json::to_value(core.dividir(i("id")?, i("pos")? as usize)?)?,
         "buscar" => serde_json::to_value(core.buscar(&s("modo")?, &s("texto")?)?)?,
         "tm_sintetico" => json!(core.tm_sintetico(i("n")? as usize, i("semente")? as u64)?),
+        "tm_carregar_tmx" => {
+            let pares = catcore::tmx::parse_pasta(&s("pasta")?, &s("origem")?, &s("destino")?)?;
+            json!({"pares": pares.len(), "total": core.tm_inserir(&pares)?})
+        }
         "tm_aquecer" => json!(core.tm_aquecer()?),
         "fila" => json!(core.fila(&s("estado")?)?),
         "sair" => std::process::exit(0),

@@ -112,3 +112,25 @@ fn t_r7_busca_na_memoria() {
     assert!(!r2.is_empty());
     println!("memoria: {:?}, concordancia: {:?} (build de teste, nao e medicao)", dt, dt2);
 }
+
+// Arquivos reais em docs/ (fora do git): os testes são ignorados se não existirem.
+fn docs(n: &str) -> Option<String> {
+    let p = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../docs").join(n);
+    p.exists().then(|| p.to_string_lossy().into_owned())
+}
+
+#[test]
+fn importa_pptx_real() {
+    let Some(f) = std::fs::read_dir(std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../docs")).ok().and_then(|d| d.flatten().map(|e| e.path()).find(|p| p.extension().map_or(false, |x| x == "pptx"))) else { return };
+    let mut c = Core::abrir(":memory:").unwrap();
+    let r = c.importar(f.to_str().unwrap()).unwrap();
+    assert!(r["n_segmentos"].as_i64().unwrap() > 100);
+}
+
+#[test]
+fn carrega_tmx_real() {
+    let Some(_) = docs("translation memory") else { return };
+    let pares = catcore::tmx::parse_pasta(&docs("translation memory").unwrap(), "EN-GB", "PT-PT").unwrap();
+    assert!(pares.len() > 50_000);
+    assert!(pares.iter().all(|(a, b)| !a.is_empty() && !b.is_empty()));
+}
