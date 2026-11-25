@@ -1,0 +1,36 @@
+{
+ "nome": "previa",
+ "descricao": "M11: prévia compilada. Página 1, depois avança e volta (Ctrl+Shift+→/←); 8 pedidos por execução. O núcleo exporta, o LibreOffice converte a página em PNG, a casca exibe.",
+ "passos": [
+  {
+   "tipo": "abrir",
+   "documento": "pequeno.docx"
+  },
+  {
+   "tipo": "previa"
+  },
+  {
+   "tipo": "repetir",
+   "vezes": 3,
+   "passos": [
+    {
+     "tipo": "previa",
+     "combo": "ctrl+shift+right"
+    }
+   ]
+  },
+  {
+   "tipo": "repetir",
+   "vezes": 3,
+   "passos": [
+    {
+     "tipo": "previa",
+     "combo": "ctrl+shift+left"
+    }
+   ]
+  },
+  {
+   "tipo": "previa"
+  }
+ ]
+}

@@ -9,7 +9,7 @@
     "windows": [
       { "title": "CAT Study (Tauri)", "width": 1440, "height": 900, "resizable": false, "center": true }
     ],
-    "security": { "csp": null }
+    "security": { "csp": null, "assetProtocol": { "enable": true, "scope": ["$TEMP/**"] } }
   },
   "bundle": { "active": true, "targets": ["nsis"], "icon": ["icons/icon.ico"] }
 }

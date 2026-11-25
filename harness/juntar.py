@@ -11,6 +11,7 @@ PASSOS = {
     "mesclar": [("M6", "mesclar", None)],
     "dividir": [("M6", "dividir", None)],
     "buscar": [("M8", "buscar", None)],
+    "previa": [("M11", "previa", None)],
 }
 TOLERANCIA_US = 1_000_000
 

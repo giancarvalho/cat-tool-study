@@ -50,6 +50,11 @@ def verificar(caso, s):
         n0 = s[0]["contagem"]
         ok(s[1]["contagem"] == n0 - 1 and s[1]["total"] == n0 - 1, f"mesclar: contagem {n0} -> {s[1]['contagem']}, lista {s[1]['total']}")
         ok(s[2]["contagem"] == n0 and s[2]["total"] == n0, f"dividir: contagem {s[2]['contagem']}, lista {s[2]['total']} (esperado {n0})")
+    elif caso == "tr9":
+        ok(len(s) >= 2, f"só {len(s)} instantâneos")
+        a, b = s[0]["previaCompilada"], s[1]["previaCompilada"]
+        ok(a and a["pagina"] == 1 and a["largura"] > 400 and a["altura"] > 400, f"página 1 não exibida: {a}")
+        ok(b and b["pagina"] == 2 and b["largura"] > 400, f"página 2 não exibida: {b}")
     elif caso in ("tr7", "tr7r"):
         ok(len(s) >= 1, "sem instantâneo")
         r = s[0]["resultados"]
@@ -59,7 +64,7 @@ def verificar(caso, s):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--so", default="electron,tauri,avalonia,flutter")
-    ap.add_argument("--casos", default="tr2,tr3,tr4,tr5,tr6,tr7")
+    ap.add_argument("--casos", default="tr2,tr3,tr4,tr5,tr6,tr7,tr9")
     ap.add_argument("--candidatos", default="harness/candidatos.json")
     a = ap.parse_args()
     cands = json.load(open(os.path.join(RAIZ, a.candidatos), encoding="utf-8"))

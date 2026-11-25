@@ -12,3 +12,5 @@
 - **Pendente:** seletor de arquivo (`abrir`); pacote de instalação.
 - **Achado de harness:** o WebView2 descartou a primeira tecla enviada após focar a janela (o Electron não). O driver agora envia `Esc` de aquecimento para todos os candidatos antes do roteiro.
 - Diferenças de comparação: o Electron roda o núcleo como processo filho (IPC), o Tauri em processo; é a decisão do plano (§3), e o custo de fronteira faz parte do que cada casca oferece.
+
+- Prévia compilada (Emenda 5, M11) integrada: Ctrl+Shift+P, Ctrl+Shift+→/←, Esc; T-R9 passa (ver `harness/README.md`).

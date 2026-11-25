@@ -69,6 +69,11 @@ public sealed class MainWindow : Window
     readonly ComboBox _modo = new() { ItemsSource = new[] { "concordancia", "memoria" }, SelectedIndex = 0, Width = 140 };
     readonly TextBox _busca = new() { Width = 280, Watermark = "Buscar (Ctrl+F)" };
     readonly Border _resultados = new() { IsVisible = false, Background = Brushes.White, BorderBrush = Brushes.Gray, BorderThickness = new Thickness(1), HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 42, 8, 0), MaxHeight = 360, Width = 560, Padding = new Thickness(8) };
+    // prévia compilada (Emenda 5, M11)
+    readonly TextBlock _pcPag = new() { Margin = new Thickness(8, 2), FontSize = 12 };
+    readonly Image _pcImg = new() { Width = 560, Stretch = Stretch.Uniform };
+    readonly Border _pc = new() { IsVisible = false, Background = Brushes.White, BorderBrush = Brushes.Gray, BorderThickness = new Thickness(1), HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 42, 8, 0), MaxHeight = 800 };
+    int _pcPagina = 1;
     readonly TextBlock _resultadosTxt = new() { TextWrapping = TextWrapping.Wrap };
     readonly Border _modalBox = new() { IsVisible = false, Background = new SolidColorBrush(Color.FromArgb(0x66, 0, 0, 0)) };
     readonly TextBlock _modalTxt = new() { FontSize = 16 };
@@ -155,7 +160,8 @@ public sealed class MainWindow : Window
         _busca.KeyDown += (_, e) => { if (e.Key == Key.Enter) { e.Handled = true; _ = Buscar(); } };
         _modo.SelectionChanged += (_, _) => _resultados.IsVisible = false;
 
-        Content = new Grid { Children = { corpo, _resultados, _modalBox } };
+        _pc.Child = new ScrollViewer { Content = new StackPanel { Children = { _pcPag, _pcImg } } };
+        Content = new Grid { Children = { corpo, _resultados, _pc, _modalBox } };
     }
     static T Dock<T>(T c, Dock d) where T : Control { DockPanel.SetDock(c, d); return c; }
     readonly ObservableCollection<long> _blocoOrdemObs = new();
@@ -391,6 +397,21 @@ public sealed class MainWindow : Window
     }
 
     // ---------- teclado (tunelamento: antes do controle focado) ----------
+    // ---------- prévia compilada (Emenda 5, M11): o núcleo exporta, o LibreOffice converte a página em PNG; a casca só exibe ----------
+    async Task PreviaCompilada(int pagina)
+    {
+        if (_docId <= 0) return;
+        var t0 = Perf.NowMs;
+        var r = await _core.Rpc("previa_compilada", new { doc_id = _docId, pagina });
+        var png = r.Resultado.GetProperty("png").GetString()!;
+        _pcImg.Source = new Avalonia.Media.Imaging.Bitmap(png);
+        _pcPagina = pagina;
+        _pcPag.Text = $"Prévia compilada · página {pagina} (Ctrl+Shift+← →, Esc fecha)";
+        _pc.IsVisible = true;
+        var det = $"pagina={pagina};export_us={r.Resultado.GetProperty("t_export_us").GetInt64()};render_us={r.Resultado.GetProperty("t_render_us").GetInt64()}";
+        Perf.AposQuadro(tq => Perf.Registrar(Perf.Linha("M11", "previa", t0, tq, det, r.TCoreUs)));
+    }
+
     // ---------- instantâneo de estado para os testes funcionais (Ctrl+Alt+F9) ----------
     int _seqEstado;
     static string Marcado(IEnumerable<Inline> v) => string.Concat(v.Select(x => x.IsTag ? "<" + (x.Tipo == "fecha" ? "/" : "") + x.Id + ">" : x.V));
@@ -415,6 +436,7 @@ public sealed class MainWindow : Window
             ["resultados"] = _resultados.IsVisible ? _resultadosTxt.Text : "",
             ["fila"] = (await _core.Rpc("fila", new { estado = "pendente" })).Resultado.GetInt64(),
             ["contagem"] = (await _core.Rpc("contagem", new { doc_id = _docId })).Resultado.GetInt64(),
+            ["previaCompilada"] = _pc.IsVisible && _pcImg.Source is Avalonia.Media.Imaging.Bitmap bm ? new Dictionary<string, object?> { ["pagina"] = _pcPagina, ["largura"] = bm.PixelSize.Width, ["altura"] = bm.PixelSize.Height } : null,
             ["versao"] = ativo?.Versao, ["destinoAtivo"] = ativo != null ? Marcado(ativo.Destino) : null,
         };
         Perf.Registrar(new() { ["metrica"] = "ESTADO", ["passo"] = (_seqEstado++).ToString(), ["erro"] = Uri.EscapeDataString(JsonSerializer.Serialize(d)) });
@@ -443,8 +465,10 @@ public sealed class MainWindow : Window
         bool emBusca = foco == _busca || _busca.IsKeyboardFocusWithin;
         if (!mod && !alt && foco is SegmentEditor ed && !ed.ReadOnly && ImprimivelDe(e.Key)) _teclaT = Perf.NowMs;
         var k = e.Key;
-        if (mod && k == Key.Enter) { e.Handled = true; _ = ConfirmarSeg(!shift); }
-        else if (k == Key.Escape) { _resultados.IsVisible = false; if (!emBusca) { Descartar(); e.Handled = true; } }
+        if (mod && shift && k == Key.P) { e.Handled = true; _ = PreviaCompilada(_pc.IsVisible ? _pcPagina : 1); }
+        else if (mod && shift && _pc.IsVisible && (k == Key.Right || k == Key.Left)) { e.Handled = true; _ = PreviaCompilada(Math.Max(1, _pcPagina + (k == Key.Right ? 1 : -1))); }
+        else if (mod && k == Key.Enter) { e.Handled = true; _ = ConfirmarSeg(!shift); }
+        else if (k == Key.Escape) { _resultados.IsVisible = false; _pc.IsVisible = false; if (!emBusca) { Descartar(); e.Handled = true; } }
         else if (mod && !shift && k == Key.M) { e.Handled = true; _ = Mesclar(); }
         else if (mod && shift && k == Key.D) { e.Handled = true; _ = Dividir(); }
         else if (mod && k == Key.F) { e.Handled = true; _busca.Focus(); }

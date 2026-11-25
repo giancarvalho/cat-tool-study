@@ -249,6 +249,14 @@ fn executar(passos: &[Value], log: &mut Log, cont: &mut usize) -> Result<()> {
                 *cont += 1;
                 esperar(espera(500));
             }
+            "previa" => {
+                // prévia compilada (M11): pede a página; `combo` padrão Ctrl+Shift+P (Ctrl+Shift+→ para a seguinte)
+                let c = p["combo"].as_str().unwrap_or("ctrl+shift+p");
+                let t = combo(c)?;
+                log.linha("previa", *cont, c, t);
+                *cont += 1;
+                esperar(espera(4000));
+            }
             "tecla" => {
                 let c = p["combo"].as_str().unwrap_or("");
                 let t = combo(c)?;

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: asset: http://asset.localhost data:">
 <title>CAT Study (Electron)</title>
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,6 +18,7 @@
   <input id="busca" placeholder="Buscar (Ctrl+F)">
 </div>
 <div id="resultados" hidden></div>
+<div id="pc" hidden><div id="pc-pag"></div><img id="pc-img" alt="prévia compilada"></div>
 <div id="principal">
   <div id="lista"><div id="lista-in"></div></div>
   <div id="previa"><div id="previa-in"></div></div>

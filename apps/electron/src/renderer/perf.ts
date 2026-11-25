@@ -6,6 +6,7 @@ declare global {
       rpc(metodo: string, params: unknown): Promise<{ ok: boolean; resultado: any; erro?: string; t_core_us: number }>;
       args(): Promise<{ teste: boolean; doc?: string; script?: string; out?: string; tm?: number }>;
       abrir(): Promise<string | null>;
+      urlArquivo(caminho: string): string;
       log(rows: unknown[]): void;
     };
     __cat?: any;

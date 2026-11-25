@@ -16,3 +16,5 @@
 ## Estado (2026-11-24)
 - T-R8 passa (200 de 200 teclas, M1, M2, M3, M5, M6, M8). T-R3 verificado por fumaça (acima). T-R2 a T-R7 passam por roteiro (`harness/funcional.py`, instantâneo de estado no Ctrl+Alt+F9).
 - Pendente: seletor de arquivo, exportação e prévia compilada (Emenda 5), tamanho do pacote (`build/.../Release`).
+
+- Prévia compilada (Emenda 5, M11) integrada: Ctrl+Shift+P, Ctrl+Shift+→/←, Esc; T-R9 passa (ver `harness/README.md`).

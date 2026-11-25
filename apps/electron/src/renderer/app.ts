@@ -253,6 +253,27 @@ async function buscar() {
   aposQuadro((tq) => registrar({ metrica: "M8", passo: "buscar", t_recebe_us: Math.round(t0 * 1000), t_core_us: r.t_core_us, valor: +(tq - t0).toFixed(3), unidade: "ms", erro: modo }));
 }
 
+// ---------- prévia compilada (Emenda 5, M11) ----------
+// Núcleo exporta o documento, o LibreOffice converte a página em PNG; a casca só exibe a imagem.
+let previaPag = 1;
+async function previaCompilada(pagina: number) {
+  if (docId <= 0) return;
+  const t0 = now();
+  const r = await rpc("previa_compilada", { doc_id: docId, pagina });
+  if (!r.ok) {
+    $("estado").textContent = "prévia: " + (r.erro ?? "falhou");
+    return;
+  }
+  const img = $("pc-img") as HTMLImageElement;
+  img.src = window.cat.urlArquivo(r.resultado.png) + "?t=" + Date.now();
+  await img.decode();
+  previaPag = pagina;
+  $("pc-pag").textContent = `Prévia compilada · página ${pagina} (Ctrl+Shift+← →, Esc fecha)`;
+  $("pc").hidden = false;
+  const det = `pagina=${pagina};export_us=${r.resultado.t_export_us};render_us=${r.resultado.t_render_us}`;
+  aposQuadro((tq) => registrar({ metrica: "M11", passo: "previa", t_recebe_us: Math.round(t0 * 1000), t_core_us: r.t_core_us, valor: +(tq - t0).toFixed(3), unidade: "ms", erro: det }));
+}
+
 // ---------- instantâneo de estado para os testes funcionais (Ctrl+Alt+F9) ----------
 // Grava uma linha ESTADO no CSV do app com o estado interno (JSON em percent-encoding, sem vírgulas).
 let seqEstado = 0;
@@ -269,6 +290,7 @@ async function instantaneo() {
     resultados: $("resultados").hidden ? "" : $("resultados").innerText.slice(0, 300),
     fila: (await rpc("fila", { estado: "pendente" })).resultado,
     contagem: (await rpc("contagem", { doc_id: docId })).resultado,
+    previaCompilada: $("pc").hidden ? null : { pagina: previaPag, largura: ($("pc-img") as HTMLImageElement).naturalWidth, altura: ($("pc-img") as HTMLImageElement).naturalHeight },
     versao: active >= 0 ? segs[active].versao : null,
     destinoAtivo: active >= 0 ? segs[active].destino.map((x: any) => (x.k === "g" ? "<" + (x.tipo === "fecha" ? "/" : "") + x.id + ">" : x.v)).join("") : null,
   };
@@ -290,11 +312,18 @@ window.addEventListener(
     const mod = e.ctrlKey || e.metaKey;
     const k = e.key;
     if (k.length === 1 && !mod && !e.altKey && e.target !== $("busca")) marcarTecla(k);
-    if (mod && k === "Enter") {
+    if (mod && e.shiftKey && k.toLowerCase() === "p") {
+      e.preventDefault();
+      void previaCompilada($("pc").hidden ? 1 : previaPag);
+    } else if (mod && e.shiftKey && (k === "ArrowRight" || k === "ArrowLeft") && !$("pc").hidden) {
+      e.preventDefault();
+      void previaCompilada(Math.max(1, previaPag + (k === "ArrowRight" ? 1 : -1)));
+    } else if (mod && k === "Enter") {
       e.preventDefault();
       confirmarSeg(!e.shiftKey);
     } else if (k === "Escape") {
       $("resultados").hidden = true;
+      $("pc").hidden = true;
       if (e.target !== $("busca")) descartar();
     } else if (mod && k.toLowerCase() === "m" && !e.shiftKey) {
       e.preventDefault();

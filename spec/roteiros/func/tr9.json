@@ -1,0 +1,24 @@
+{
+ "nome": "T-R9",
+ "descricao": "Prévia compilada: Ctrl+Shift+P mostra a página 1 do documento exportado; Ctrl+Shift+→ mostra a 2.",
+ "doc": "pequeno.docx",
+ "passos": [
+  {
+   "tipo": "previa"
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  },
+  {
+   "tipo": "previa",
+   "combo": "ctrl+shift+right"
+  },
+  {
+   "tipo": "tecla",
+   "combo": "ctrl+alt+f9",
+   "atraso_ms": 500
+  }
+ ]
+}

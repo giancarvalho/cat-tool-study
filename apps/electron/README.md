@@ -18,3 +18,5 @@ npx electron . --teste --tm-sintetico 100000   # casos funcionais T-R2..T-R7
 - Rascunho do segmento fica na memória até `Ctrl+Enter`; `Esc` volta ao último confirmado.
 - Mesclar só junta segmentos do mesmo bloco; dividir recebe a posição em átomos (caractere ou tag).
 - Teclas dos testes funcionais vêm de `webContents.sendInputEvent` + `insertText`, não do sistema operacional. A medição (M1, M2) usa o driver externo, ainda não construído (harness).
+
+- Prévia compilada (Emenda 5, M11) integrada: Ctrl+Shift+P, Ctrl+Shift+→/←, Esc; T-R9 passa (ver `harness/README.md`).

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:fleather/fleather.dart';
 import 'package:flutter/foundation.dart';
@@ -42,6 +43,10 @@ class _CatAppState extends State<CatApp> {
   EditorSeg? ed;
   String nome = 'sem documento', estado = 'pronto', ultimo = '', resultados = '';
   bool mostraResultados = false;
+  // prévia compilada (Emenda 5, M11)
+  FileImage? pcImg;
+  int pcPagina = 1, pcLargura = 0, pcAltura = 0;
+  bool pcVisivel = false;
   String modo = 'concordancia';
   double? teclaT;
   Completer<bool>? modal;
@@ -303,6 +308,40 @@ class _CatAppState extends State<CatApp> {
     Perf.aposQuadro((tq) => Perf.linha('M8', 'buscar', t0, tq, erro: modo, tCore: tc));
   }
 
+  // ---------- prévia compilada (Emenda 5, M11): o núcleo exporta, o LibreOffice converte a página em PNG; a casca só exibe ----------
+  Future<ui.Image> decodificar(ImageProvider p) {
+    final c = Completer<ui.Image>();
+    final s = p.resolve(const ImageConfiguration());
+    late ImageStreamListener l;
+    l = ImageStreamListener((i, _) {
+      c.complete(i.image);
+      s.removeListener(l);
+    }, onError: (e, st) {
+      c.completeError(e);
+      s.removeListener(l);
+    });
+    s.addListener(l);
+    return c.future;
+  }
+
+  Future<void> previaCompilada(int pagina) async {
+    if (docId <= 0) return;
+    final t0 = Perf.nowMs;
+    final (r, tc) = await core.rpc('previa_compilada', {'doc_id': docId, 'pagina': pagina});
+    final prov = FileImage(File(r['png'] as String));
+    await prov.evict();
+    final img = await decodificar(prov);
+    setState(() {
+      pcImg = prov;
+      pcPagina = pagina;
+      pcLargura = img.width;
+      pcAltura = img.height;
+      pcVisivel = true;
+    });
+    final det = 'pagina=$pagina;export_us=${r['t_export_us']};render_us=${r['t_render_us']}';
+    Perf.aposQuadro((tq) => Perf.linha('M11', 'previa', t0, tq, erro: det, tCore: tc));
+  }
+
   // ---------- instantâneo de estado para os testes funcionais (Ctrl+Alt+F9) ----------
   // A prévia é reconstruída por bloco (ValueListenableBuilder): contamos as construções por bloco para provar
   // que uma tecla reconstrói só o bloco do segmento ativo.
@@ -328,6 +367,7 @@ class _CatAppState extends State<CatApp> {
       'previaOutros': construcoes.entries.where((e) => e.key != idAtivo).fold<int>(0, (h, e) => h * 31 + e.key * 7 + e.value),
       'resultados': mostraResultados ? resultados : '',
       'fila': (fila as num).toInt(), 'contagem': (cont as num).toInt(),
+      'previaCompilada': pcVisivel ? {'pagina': pcPagina, 'largura': pcLargura, 'altura': pcAltura} : null,
       'versao': a?.versao, 'destinoAtivo': a == null ? null : marcado(a.destino),
     };
     Perf.registrar({'metrica': 'ESTADO', 'passo': '${seqEstado++}', 'erro': Uri.encodeComponent(jsonEncode(d))});
@@ -357,12 +397,23 @@ class _CatAppState extends State<CatApp> {
     final emEd = ed != null && ed!.foco.hasFocus;
     if (e is KeyDownEvent && !ctrl && !alt && emEd && e.character != null && e.character!.isNotEmpty && e.character!.codeUnitAt(0) >= 32) teclaT = Perf.nowMs;
 
+    if (ctrl && shift && k == LogicalKeyboardKey.keyP) {
+      previaCompilada(pcVisivel ? pcPagina : 1);
+      return true;
+    }
+    if (ctrl && shift && pcVisivel && (k == LogicalKeyboardKey.arrowRight || k == LogicalKeyboardKey.arrowLeft)) {
+      previaCompilada(pcPagina + (k == LogicalKeyboardKey.arrowRight ? 1 : -1) < 1 ? 1 : pcPagina + (k == LogicalKeyboardKey.arrowRight ? 1 : -1));
+      return true;
+    }
     if (ctrl && k == LogicalKeyboardKey.enter) {
       confirmarSeg(!shift);
       return true;
     }
     if (k == LogicalKeyboardKey.escape) {
-      setState(() => mostraResultados = false);
+      setState(() {
+        mostraResultados = false;
+        pcVisivel = false;
+      });
       if (!emBusca) {
         descartar();
         return true;
@@ -663,6 +714,23 @@ class _CatAppState extends State<CatApp> {
                 constraints: const BoxConstraints(maxHeight: 360),
                 padding: const EdgeInsets.all(8),
                 child: SingleChildScrollView(child: Text(resultados)),
+              ),
+            ),
+          ),
+        if (pcVisivel && pcImg != null)
+          Positioned(
+            top: 42,
+            right: 8,
+            width: 560,
+            child: Material(
+              elevation: 4,
+              child: Container(
+                constraints: const BoxConstraints(maxHeight: 800),
+                color: Colors.white,
+                child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), child: Text('Prévia compilada · página $pcPagina (Ctrl+Shift+← →, Esc fecha)', style: const TextStyle(fontSize: 12))),
+                  Flexible(child: SingleChildScrollView(child: Image(image: pcImg!, width: 560, fit: BoxFit.fitWidth))),
+                ]),
               ),
             ),
           ),

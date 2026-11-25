@@ -12,3 +12,5 @@
 - **Pendente:** seletor de arquivo; publicação (`dotnet publish`, tamanho do instalador: a pasta de build tem 561 MB porque inclui binários nativos de todas as plataformas; o publish para win-x64 será bem menor); exportação e prévia compilada (Emendas 5).
 - **Diferenças de plataforma observadas (uma rodada de validação, não são medição):** início do app maior (JIT, sem ReadyToRun), M8 e M3 com mais cauda (a lista de resultados e a lista virtualizada rodam na thread de interface).
 - **Mudanças da API do Avalonia 12 que custaram tempo:** `GotFocus/LostFocus` passaram a `FocusChangedEventArgs`; a área de transferência saiu de `GetTextAsync` para as extensões `TryGetTextAsync`/`SetTextAsync` em `Avalonia.Input.Platform`.
+
+- Prévia compilada (Emenda 5, M11) integrada: Ctrl+Shift+P, Ctrl+Shift+→/←, Esc; T-R9 passa (ver `harness/README.md`).
