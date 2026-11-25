@@ -1,0 +1,71 @@
+{
+ "nome": "uso_prolongado",
+ "descricao": "M7: 60 min de ciclos (20 digitações, confirmar, rolar, mesclar, dividir, ~10 s cada), trocando de documento a cada 20 ciclos (Ctrl+Shift+O, 3 documentos de --docs-ciclo, um aberto por vez). Memória privada da árvore amostrada a cada 60 s por --memoria-cada 60.",
+ "passos": [
+  {
+   "tipo": "abrir"
+  },
+  {
+   "tipo": "repetir",
+   "vezes": 18,
+   "passos": [
+    {
+     "tipo": "repetir",
+     "vezes": 20,
+     "passos": [
+      {
+       "tipo": "tecla",
+       "combo": "ctrl+home",
+       "atraso_ms": 150
+      },
+      {
+       "tipo": "tecla",
+       "combo": "alt+down",
+       "atraso_ms": 150
+      },
+      {
+       "tipo": "digitar",
+       "texto": "abcdefghijklmnopqrst",
+       "atraso_ms": 80
+      },
+      {
+       "tipo": "confirmar"
+      },
+      {
+       "tipo": "rolar",
+       "quadros": 5,
+       "direcao": "baixo",
+       "atraso_ms": 100
+      },
+      {
+       "tipo": "tecla",
+       "combo": "ctrl+home",
+       "atraso_ms": 150
+      },
+      {
+       "tipo": "tecla",
+       "combo": "alt+down",
+       "atraso_ms": 150
+      },
+      {
+       "tipo": "mesclar"
+      },
+      {
+       "tipo": "dividir",
+       "posicao": 10
+      },
+      {
+       "tipo": "esperar",
+       "ms": 5000
+      }
+     ]
+    },
+    {
+     "tipo": "tecla",
+     "combo": "ctrl+shift+o",
+     "atraso_ms": 3000
+    }
+   ]
+  }
+ ]
+}

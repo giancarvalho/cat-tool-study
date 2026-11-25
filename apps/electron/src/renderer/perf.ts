@@ -4,7 +4,7 @@ declare global {
   interface Window {
     cat: {
       rpc(metodo: string, params: unknown): Promise<{ ok: boolean; resultado: any; erro?: string; t_core_us: number }>;
-      args(): Promise<{ teste: boolean; doc?: string; script?: string; out?: string; tm?: number }>;
+      args(): Promise<{ teste: boolean; doc?: string; docs?: string; script?: string; out?: string; tm?: number }>;
       abrir(): Promise<string | null>;
       urlArquivo(caminho: string): string;
       log(rows: unknown[]): void;

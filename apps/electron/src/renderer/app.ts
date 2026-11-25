@@ -253,6 +253,15 @@ async function buscar() {
   aposQuadro((tq) => registrar({ metrica: "M8", passo: "buscar", t_recebe_us: Math.round(t0 * 1000), t_core_us: r.t_core_us, valor: +(tq - t0).toFixed(3), unidade: "ms", erro: modo }));
 }
 
+// ---------- alternar documentos (uso prolongado, M7): --docs a;b;c e Ctrl+Shift+O abre o próximo da lista ----------
+let docsCiclo: string[] = [];
+let docIdx = 0;
+async function proximoDoc() {
+  if (!docsCiclo.length) return;
+  docIdx = (docIdx + 1) % docsCiclo.length;
+  await abrirDoc(docsCiclo[docIdx]);
+}
+
 // ---------- prévia compilada (Emenda 5, M11) ----------
 // Núcleo exporta o documento, o LibreOffice converte a página em PNG; a casca só exibe a imagem.
 let previaPag = 1;
@@ -312,7 +321,10 @@ window.addEventListener(
     const mod = e.ctrlKey || e.metaKey;
     const k = e.key;
     if (k.length === 1 && !mod && !e.altKey && e.target !== $("busca")) marcarTecla(k);
-    if (mod && e.shiftKey && k.toLowerCase() === "p") {
+    if (mod && e.shiftKey && k.toLowerCase() === "o") {
+      e.preventDefault();
+      void proximoDoc();
+    } else if (mod && e.shiftKey && k.toLowerCase() === "p") {
       e.preventDefault();
       void previaCompilada($("pc").hidden ? 1 : previaPag);
     } else if (mod && e.shiftKey && (k === "ArrowRight" || k === "ArrowLeft") && !$("pc").hidden) {
@@ -403,5 +415,6 @@ window.addEventListener('unhandledrejection', (e) => console.log('REJ', String((
       flush,
     };
   }
+  if (args.docs) docsCiclo = args.docs.split(";").filter(Boolean);
   if (args.doc) await abrirDoc(args.doc);
 })();

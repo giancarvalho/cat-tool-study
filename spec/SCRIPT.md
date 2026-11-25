@@ -20,8 +20,9 @@
 
 ## 3. Roteiros
 - `curto.json`: abrir, 200 digitações, 20 confirmações, 3 rolagens, 5 mesclar/dividir, 10 buscas. Para validar o app.
-- `medicao.json`: o mesmo, repetido 10 vezes por documento (pequeno, médio, longo, pior caso).
-- `uso_prolongado.json`: ciclo digitar, confirmar, rolar, mesclar, dividir por 60 min, com `amostrar_memoria` a cada 60 s; 3 documentos abertos (alternando).
+- `medicao.json`: o mesmo, repetido 10 vezes por documento (pequeno, médio, longo, pior caso e os reais), acrescido de 10 buscas distintas na TM real (`--tmx`), 2 rolagens contínuas de 5 s por roda (M4, com `--presentmon`), 4 pedidos de prévia compilada (M11) e amostras de memória no início e no fim.
+- `uso_prolongado.json`: ciclo digitar, confirmar, rolar, mesclar, dividir por 60 min (360 ciclos de ~10 s), com amostra de memória a cada 60 s (`--memoria-cada 60`); 3 documentos alternando.
+  - **Interpretação (v0.2):** os apps têm um documento por vez (spec v0.1); a alternância é feita por `--docs a;b;c` e `Ctrl+Shift+O` (abre o próximo, 18 trocas), sem seletor de arquivo. Mede vazamento em abrir e fechar documentos, não três documentos residentes ao mesmo tempo.
 - `editor_tags.json`: casos de comportamento do editor (seleção, cursor, tags, navegação por palavra, IME pt-BR) com asserções sobre o estado final do segmento; usado na Etapa 2 em três sistemas.
 
 ## 4. Formato do log (CSV, uma linha por evento)

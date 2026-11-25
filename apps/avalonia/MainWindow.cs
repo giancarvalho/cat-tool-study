@@ -102,6 +102,7 @@ public sealed class MainWindow : Window
         {
             if (Val("--tmx") is { } pasta) { await _core.Rpc("tm_carregar_tmx", new { pasta, origem = "EN-GB", destino = "PT-PT" }); await _core.Rpc("tm_aquecer"); }
             if (Val("--tm-sintetico") is { } n) { await _core.Rpc("tm_sintetico", new { n = int.Parse(n), semente = 42 }); await _core.Rpc("tm_aquecer"); }
+            if (Val("--docs") is { } ds) _docsCiclo = ds.Split(';', StringSplitOptions.RemoveEmptyEntries);
             if (Val("--doc") is { } doc) await AbrirDoc(doc);
         };
     }
@@ -397,6 +398,11 @@ public sealed class MainWindow : Window
     }
 
     // ---------- teclado (tunelamento: antes do controle focado) ----------
+    // ---------- alternar documentos (uso prolongado, M7): --docs a;b;c e Ctrl+Shift+O abre o próximo ----------
+    string[] _docsCiclo = Array.Empty<string>();
+    int _docIdx;
+    async Task ProximoDoc() { if (_docsCiclo.Length == 0) return; _docIdx = (_docIdx + 1) % _docsCiclo.Length; await AbrirDoc(_docsCiclo[_docIdx]); }
+
     // ---------- prévia compilada (Emenda 5, M11): o núcleo exporta, o LibreOffice converte a página em PNG; a casca só exibe ----------
     async Task PreviaCompilada(int pagina)
     {
@@ -465,7 +471,8 @@ public sealed class MainWindow : Window
         bool emBusca = foco == _busca || _busca.IsKeyboardFocusWithin;
         if (!mod && !alt && foco is SegmentEditor ed && !ed.ReadOnly && ImprimivelDe(e.Key)) _teclaT = Perf.NowMs;
         var k = e.Key;
-        if (mod && shift && k == Key.P) { e.Handled = true; _ = PreviaCompilada(_pc.IsVisible ? _pcPagina : 1); }
+        if (mod && shift && k == Key.O) { e.Handled = true; _ = ProximoDoc(); }
+        else if (mod && shift && k == Key.P) { e.Handled = true; _ = PreviaCompilada(_pc.IsVisible ? _pcPagina : 1); }
         else if (mod && shift && _pc.IsVisible && (k == Key.Right || k == Key.Left)) { e.Handled = true; _ = PreviaCompilada(Math.Max(1, _pcPagina + (k == Key.Right ? 1 : -1))); }
         else if (mod && k == Key.Enter) { e.Handled = true; _ = ConfirmarSeg(!shift); }
         else if (k == Key.Escape) { _resultados.IsVisible = false; _pc.IsVisible = false; if (!emBusca) { Descartar(); e.Handled = true; } }

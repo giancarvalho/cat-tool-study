@@ -92,6 +92,8 @@ class _CatAppState extends State<CatApp> {
       await core.rpc('tm_carregar_tmx', {'pasta': tmx, 'origem': 'EN-GB', 'destino': 'PT-PT'});
       await core.rpc('tm_aquecer');
     }
+    final docs = arg('--docs');
+    if (docs != null) docsCiclo = docs.split(';').where((x) => x.isNotEmpty).toList();
     final doc = arg('--doc');
     if (doc != null) await abrirDoc(doc);
   }
@@ -308,6 +310,15 @@ class _CatAppState extends State<CatApp> {
     Perf.aposQuadro((tq) => Perf.linha('M8', 'buscar', t0, tq, erro: modo, tCore: tc));
   }
 
+  // ---------- alternar documentos (uso prolongado, M7): --docs a;b;c e Ctrl+Shift+O abre o próximo ----------
+  List<String> docsCiclo = [];
+  int docIdx = 0;
+  Future<void> proximoDoc() async {
+    if (docsCiclo.isEmpty) return;
+    docIdx = (docIdx + 1) % docsCiclo.length;
+    await abrirDoc(docsCiclo[docIdx]);
+  }
+
   // ---------- prévia compilada (Emenda 5, M11): o núcleo exporta, o LibreOffice converte a página em PNG; a casca só exibe ----------
   Future<ui.Image> decodificar(ImageProvider p) {
     final c = Completer<ui.Image>();
@@ -397,6 +408,10 @@ class _CatAppState extends State<CatApp> {
     final emEd = ed != null && ed!.foco.hasFocus;
     if (e is KeyDownEvent && !ctrl && !alt && emEd && e.character != null && e.character!.isNotEmpty && e.character!.codeUnitAt(0) >= 32) teclaT = Perf.nowMs;
 
+    if (ctrl && shift && k == LogicalKeyboardKey.keyO) {
+      proximoDoc();
+      return true;
+    }
     if (ctrl && shift && k == LogicalKeyboardKey.keyP) {
       previaCompilada(pcVisivel ? pcPagina : 1);
       return true;

@@ -18,6 +18,7 @@ const args = {
   out: val("--out"),
   tm: val("--tm-sintetico") ? Number(val("--tm-sintetico")) : undefined,
   tmx: val("--tmx"),
+  docs: val("--docs"),
 };
 
 let core: ChildProcessWithoutNullStreams;

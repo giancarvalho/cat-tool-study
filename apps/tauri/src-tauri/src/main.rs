@@ -25,6 +25,7 @@ fn args_do_processo() -> (Value, Option<String>) {
             "out": out,
             "tm": val("--tm-sintetico").and_then(|v| v.parse::<i64>().ok()),
             "tmx": val("--tmx"),
+            "docs": val("--docs"),
         }),
         out,
     )

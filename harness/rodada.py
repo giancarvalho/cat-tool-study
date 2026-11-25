@@ -61,6 +61,8 @@ def main():
     ap.add_argument("--pausa", type=int, default=15)
     ap.add_argument("--gpu", choices=["integrada", "nvidia", ""], default="")
     ap.add_argument("--memoria-cada", default="")
+    ap.add_argument("--tmx", default="docs/translation memory", help="pasta dos TMX para o M8 (TM real); vazio = sem TM")
+    ap.add_argument("--docs-ciclo", default="", help="lista a;b;c de documentos para Ctrl+Shift+O (uso prolongado, M7)")
     ap.add_argument("--presentmon", action="store_true", help="captura o PresentMon (M4); exige privilégio elevado ou o grupo Performance Log Users")
     a = ap.parse_args()
 
@@ -72,7 +74,7 @@ def main():
     ambiente.json.dump(ambiente.coletar(a.perfil, {k: v["versao"] for k, v in cands.items()}), open(os.path.join(out, "ambiente.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     rng = random.Random(a.semente)
     ordens = []
-    meta = {"semente": a.semente, "commit": git("rev-parse", "HEAD"), "arvore_suja": bool(git("status", "--porcelain")), "doc": a.doc, "perfil": a.perfil, "reps": a.reps, "roteiro": a.roteiro, "gpu": a.gpu, "ordens": ordens}
+    meta = {"semente": a.semente, "commit": git("rev-parse", "HEAD"), "arvore_suja": bool(git("status", "--porcelain")), "doc": a.doc, "perfil": a.perfil, "reps": a.reps, "roteiro": a.roteiro, "gpu": a.gpu, "tmx": a.tmx, "docs_ciclo": a.docs_ciclo, "ordens": ordens}
     gk = None
     if a.gpu:
         exes = [e for c in cands.values() for e in c.get("exes_gpu", [])]
@@ -95,6 +97,10 @@ def main():
                     os.remove(app_csv)
                 cmd = [c.replace("{doc}", os.path.abspath(os.path.join(RAIZ, a.doc))).replace("{out}", app_csv) for c in cands[nome]["cmd"]]
                 cmd[0] = os.path.abspath(os.path.join(RAIZ, cmd[0]))
+                if a.tmx:
+                    cmd += ["--tmx", os.path.abspath(os.path.join(RAIZ, a.tmx))]
+                if a.docs_ciclo:
+                    cmd += ["--docs", ";".join(os.path.abspath(os.path.join(RAIZ, x)) for x in a.docs_ciclo.split(";"))]
                 dr = [DRIVER, "--roteiro", os.path.join(RAIZ, a.roteiro), "--saida", os.path.join(d, "driver.csv"), "--espera-csv", app_csv, "--perfil", a.perfil]
                 if a.memoria_cada:
                     dr += ["--memoria-cada", a.memoria_cada]
