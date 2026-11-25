@@ -1,3 +1,6 @@
 docs/
 harness/tools/
 dist-pacotes/
+
+# documentos reais (o PPTX é privado, Emenda 4): nunca versionar
+corpus/real/

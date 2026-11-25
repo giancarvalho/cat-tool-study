@@ -183,6 +183,13 @@ fn esperar(ms: u64) {
     std::thread::sleep(Duration::from_millis(ms));
 }
 
+static APP_CSV: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+
+/// Número de linhas M11 já gravadas no CSV do app (a prévia compilada de documentos grandes leva dezenas de segundos).
+fn linhas_m11() -> usize {
+    APP_CSV.get().and_then(|p| std::fs::read_to_string(p).ok()).map_or(0, |t| t.lines().filter(|l| l.contains(",M11,")).count())
+}
+
 fn executar(passos: &[Value], log: &mut Log, cont: &mut usize) -> Result<()> {
     for p in passos {
         let tipo = p["tipo"].as_str().ok_or_else(|| anyhow!("passo sem tipo"))?;
@@ -252,10 +259,16 @@ fn executar(passos: &[Value], log: &mut Log, cont: &mut usize) -> Result<()> {
             "previa" => {
                 // prévia compilada (M11): pede a página; `combo` padrão Ctrl+Shift+P (Ctrl+Shift+→ para a seguinte)
                 let c = p["combo"].as_str().unwrap_or("ctrl+shift+p");
+                let antes = linhas_m11();
                 let t = combo(c)?;
                 log.linha("previa", *cont, c, t);
                 *cont += 1;
-                esperar(espera(4000));
+                // espera a linha M11 do app (até 300 s) e mais um respiro; sem CSV, espera fixa
+                let limite = Instant::now() + Duration::from_secs(300);
+                while APP_CSV.get().is_some() && linhas_m11() <= antes && Instant::now() < limite {
+                    esperar(200);
+                }
+                esperar(espera(1500));
             }
             "tecla" => {
                 let c = p["combo"].as_str().unwrap_or("");
@@ -344,7 +357,10 @@ fn main() -> Result<()> {
     }
     let roteiro = v("--roteiro").ok_or_else(|| anyhow!("--roteiro ausente"))?;
     let saida = v("--saida").ok_or_else(|| anyhow!("--saida ausente"))?;
-    let esp_csv = v("--espera-csv"); // CSV do app: espera aparecer a linha M5 (abrir)
+    let esp_csv = v("--espera-csv");
+    if let Some(p) = &esp_csv {
+        let _ = APP_CSV.set(p.clone());
+    } // CSV do app: espera aparecer a linha M5 (abrir)
     let sep = a.iter().position(|x| x == "--").ok_or_else(|| anyhow!("faltou '-- <app> <args>'"))?;
     let cmd = &a[sep + 1..];
     unsafe { timeBeginPeriod(1) };

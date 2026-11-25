@@ -1,6 +1,6 @@
 {
  "nome": "medicao",
- "descricao": "Roteiro de medição (spec/SCRIPT.md §3): 200 digitações com 20 confirmações (M1, M2, M3), 3 rolagens por teclado, 5 mesclar/dividir (M6), 10 buscas na TM real (M8), rolagem contínua por roda (M4, exige --presentmon), 4 pedidos de prévia compilada (M11) e amostras de memória no início e no fim (M7 parcial). Uma execução por documento; 10 repetições pela rodada.py.",
+ "descricao": "Roteiro de medição (spec/SCRIPT.md §3): 200 digitações com 20 confirmações (M1, M2, M3), 3 rolagens por teclado, 5 mesclar/dividir (M6), 10 buscas na TM real (M8), 4 pedidos de prévia compilada (M11) e amostras de memória no início e no fim (M7 parcial). Uma execução por documento; 10 repetições pela rodada.py. M4 (rolagem contínua por roda, PresentMon) roda à parte, com rolagem.json, para que a captura ETW não perturbe as demais métricas.",
  "passos": [
   {
    "tipo": "abrir"
@@ -106,18 +106,6 @@
    "tipo": "tecla",
    "combo": "esc",
    "atraso_ms": 200
-  },
-  {
-   "tipo": "rolar_roda",
-   "segundos": 5,
-   "notches_por_s": 60,
-   "direcao": "baixo"
-  },
-  {
-   "tipo": "rolar_roda",
-   "segundos": 5,
-   "notches_por_s": 60,
-   "direcao": "cima"
   },
   {
    "tipo": "previa"
