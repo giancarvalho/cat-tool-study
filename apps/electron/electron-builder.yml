@@ -1,0 +1,31 @@
+# Pacotes do teste de fumaça, só macOS e Linux (o pacote do Windows continua com harness/empacotar.py).
+appId: study.cattool.electron
+productName: catstudy-electron
+directories:
+  output: release
+files:
+  - dist/**/*
+  - package.json
+extraMetadata:
+  description: Candidato Electron do estudo cat-tool-study
+  homepage: https://github.com/giancarvalho/cat-tool-study
+npmRebuild: false
+mac:
+  target: zip
+  identity: null # sem assinatura nem notarização
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
+  extraResources:
+    - from: ../../core/target/release/catcore
+      to: catcore
+linux:
+  target:
+    - AppImage
+    - deb
+  executableName: catstudy-electron
+  executableArgs: [] # o padrão do electron-builder para AppImage põe --no-sandbox no atalho .desktop
+  category: Development
+  maintainer: cat-tool-study <noreply@invalid.example>
+  artifactName: ${productName}-${version}-linux-${arch}.${ext}
+  extraResources:
+    - from: ../../core/target/release/catcore
+      to: catcore

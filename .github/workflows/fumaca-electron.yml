@@ -110,14 +110,85 @@ jobs:
             npm test -- --tm-sintetico 100000 2>&1 | tee ../../fumaca-logs/electron-dev.log
           fi
 
+      # Pacotes: só macOS e Ubuntu (o Windows continua com harness/empacotar.py).
+      # Os testes do pacote rodam sem CATCORE, para o app usar o núcleo que vai dentro dele.
+      # Rodam mesmo se o teste de desenvolvimento falhar, para o registro ficar completo.
+      - name: Pacote - gerar
+        if: runner.os != 'Windows' && !cancelled()
+        working-directory: apps/electron
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: |
+          set -o pipefail
+          alvo=$([ "$RUNNER_OS" = "macOS" ] && echo --mac || echo --linux)
+          npx --no-install electron-builder $alvo --publish never 2>&1 | tee ../../fumaca-logs/pacote.log
+          for f in release/*.zip release/*.AppImage release/*.deb; do
+            [ -f "$f" ] || continue
+            mib=$(python -c "import os,sys;print(f'{os.path.getsize(sys.argv[1])/1048576:.1f}')" "$f")
+            echo "$(basename "$f"): $mib MiB" | tee -a ../../fumaca-logs/tamanhos.txt
+            echo "::notice title=pacote ${{ matrix.os }}::$(basename "$f"): $mib MiB"
+          done
+
+      - name: Pacote macOS (.zip) - T-R2 a T-R7
+        if: runner.os == 'macOS' && !cancelled()
+        timeout-minutes: 15
+        env:
+          CORPUS_DIR: ${{ github.workspace }}/corpus/out
+          TEST_RESULT: ${{ github.workspace }}/fumaca-logs/test-result-zip.json
+        run: |
+          set -o pipefail
+          ditto -x -k apps/electron/release/*.zip "$RUNNER_TEMP/zip"
+          "$RUNNER_TEMP/zip/catstudy-electron.app/Contents/MacOS/catstudy-electron" --teste --tm-sintetico 100000 2>&1 | tee fumaca-logs/electron-zip.log
+
+      - name: Pacote Ubuntu (.AppImage) - T-R2 a T-R7
+        if: runner.os == 'Linux' && !cancelled()
+        timeout-minutes: 15
+        env:
+          CORPUS_DIR: ${{ github.workspace }}/corpus/out
+          TEST_RESULT: ${{ github.workspace }}/fumaca-logs/test-result-appimage.json
+        run: |
+          set -o pipefail
+          img=$(realpath apps/electron/release/*.AppImage)
+          chmod +x "$img"
+          cd "$RUNNER_TEMP"
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" "$img" --appimage-extract-and-run --teste --tm-sintetico 100000 2>&1 | tee "$GITHUB_WORKSPACE/fumaca-logs/electron-appimage.log"
+
+      - name: Pacote Ubuntu (.deb) - T-R2 a T-R7
+        if: runner.os == 'Linux' && !cancelled()
+        timeout-minutes: 15
+        env:
+          CORPUS_DIR: ${{ github.workspace }}/corpus/out
+          TEST_RESULT: ${{ github.workspace }}/fumaca-logs/test-result-deb.json
+        run: |
+          set -o pipefail
+          sudo apt-get update -q
+          deb=$(realpath apps/electron/release/*.deb)
+          sudo apt-get install -y -q "$deb" 2>&1 | tee fumaca-logs/deb-install.log
+          cd "$RUNNER_TEMP"
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" /opt/catstudy-electron/catstudy-electron --teste --tm-sintetico 100000 2>&1 | tee "$GITHUB_WORKSPACE/fumaca-logs/electron-deb.log"
+
       - name: Resumo
         if: always()
         run: |
-          log=fumaca-logs/electron-dev.log
-          [ -f "$log" ] || exit 0
-          grep -E "PASSOU|FALHOU|TODOS PASSARAM|HÁ FALHAS|FATAL" "$log" | while IFS= read -r l; do
-            echo "::notice title=dev ${{ matrix.os }}::$l"
+          for log in fumaca-logs/electron-*.log; do
+            [ -f "$log" ] || continue
+            nome=$(basename "$log" .log)
+            grep -E "PASSOU|FALHOU|TODOS PASSARAM|HÁ FALHAS|FATAL" "$log" | paste -sd'|' - | while IFS= read -r l; do
+              echo "::notice title=${nome#electron-} ${{ matrix.os }}::$l"
+            done
           done
+
+      - name: Publicar pacotes
+        if: runner.os != 'Windows' && !cancelled()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pacotes-${{ matrix.os }}
+          path: |
+            apps/electron/release/*.zip
+            apps/electron/release/*.AppImage
+            apps/electron/release/*.deb
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Publicar resultado e logs
         if: always()
