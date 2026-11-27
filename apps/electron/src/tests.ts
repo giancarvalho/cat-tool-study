@@ -4,7 +4,8 @@ import type { BrowserWindow } from "electron";
 import { writeFileSync } from "node:fs";
 import * as path from "node:path";
 
-const corpus = (n: string) => path.resolve(__dirname, "../../../corpus/out", n);
+// CORPUS_DIR: pasta do corpus quando o app está empacotado (o caminho relativo ao código não existe no pacote).
+const corpus = (n: string) => path.resolve(process.env.CORPUS_DIR || path.resolve(__dirname, "../../../corpus/out"), n);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function rodarTestes(win: BrowserWindow, _doc?: string): Promise<boolean> {

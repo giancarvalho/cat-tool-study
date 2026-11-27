@@ -1,7 +1,8 @@
 # Electron (candidato finalista)
 
 Electron 44.4.5 + prosemirror-view 1.42.8 (+ prosemirror-model 1.25.13, mesma versão da dependência do view). Build com esbuild.
-Núcleo: processo filho `catcore` (JSON-RPC), caminho em `CATCORE` ou `core/target/release/catcore.exe`.
+Núcleo: processo filho `catcore` (JSON-RPC), caminho em `CATCORE`; sem a variável, `catcore` (`catcore.exe` no Windows) ao lado do executável ou na pasta `resources` do pacote; senão, `core/target/release/`.
+Os testes (`--teste`) leem o corpus de `CORPUS_DIR`, ou de `corpus/out` se a variável não for informada.
 
 ```
 npm install
