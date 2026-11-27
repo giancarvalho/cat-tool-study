@@ -76,6 +76,26 @@ jobs:
           set -o pipefail
           npm ci 2>&1 | tee ../../fumaca-logs/npm-ci.log
 
+      # O Ubuntu 24.04 restringe namespaces de usuário pelo AppArmor, e sem eles o sandbox do Chromium aborta.
+      # A correção é no runner; o app nunca roda com --no-sandbox.
+      - name: Ubuntu - liberar namespaces de usuário (sandbox do Chromium)
+        if: runner.os == 'Linux'
+        run: |
+          sysctl kernel.apparmor_restrict_unprivileged_userns
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          unshare -Ur true
+
+      # A tela padrão do runner é menor que a janela do app (1440x900) e o T-R2 falha no controle.
+      - name: Windows - tela de 1920x1080
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ler = 'Add-Type -AssemblyName System.Windows.Forms; $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds; "$($b.Width)x$($b.Height)"'
+          $antes = pwsh -NoProfile -Command $ler
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          $depois = pwsh -NoProfile -Command $ler
+          "::notice title=tela windows::antes $antes; depois $depois"
+
       - name: Electron - T-R2 a T-R7 (desenvolvimento)
         working-directory: apps/electron
         timeout-minutes: 15
