@@ -1,0 +1,130 @@
+# Teste de fumaça do Electron fora do Windows: compila, testa e (depois) empacota. Não é medição.
+# O Windows entra como controle. Só corpus sintético e memória de tradução sintética.
+name: fumaca-electron
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fumaca:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.23.4
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: 3.12.10
+
+      - name: Rust (core/rust-toolchain.toml)
+        working-directory: core
+        run: rustup toolchain install
+
+      - name: Registrar o ambiente
+        run: |
+          mkdir -p fumaca-logs
+          {
+            echo "imagem: $ImageOS $ImageVersion"
+            echo "arquitetura: $(uname -m)"
+            echo "node: $(node -v)"
+            echo "python: $(python -V)"
+            echo "rustc: $(cd core && rustc -V)"
+          } | tee fumaca-logs/ambiente.txt
+          echo "::notice title=ambiente ${{ matrix.os }}::$(paste -sd';' fumaca-logs/ambiente.txt)"
+
+      - name: Corpus sintético
+        working-directory: corpus
+        run: |
+          set -o pipefail
+          {
+            python -m pip install python-docx==1.2.0 openpyxl==3.1.5 lxml
+            python gen_corpus.py out
+          } 2>&1 | tee ../fumaca-logs/corpus.log
+
+      - name: Núcleo - compilar
+        working-directory: core
+        run: |
+          set -o pipefail
+          cargo build --release 2>&1 | tee ../fumaca-logs/core-build.log
+
+      - name: Núcleo - testes
+        working-directory: core
+        run: |
+          set -o pipefail
+          cargo test 2>&1 | tee ../fumaca-logs/core-test.log
+
+      - name: Electron - dependências
+        working-directory: apps/electron
+        run: |
+          set -o pipefail
+          npm ci 2>&1 | tee ../../fumaca-logs/npm-ci.log
+
+      # O Ubuntu 24.04 restringe namespaces de usuário pelo AppArmor, e sem eles o sandbox do Chromium aborta.
+      # A correção é no runner; o app nunca roda com --no-sandbox.
+      - name: Ubuntu - liberar namespaces de usuário (sandbox do Chromium)
+        if: runner.os == 'Linux'
+        run: |
+          sysctl kernel.apparmor_restrict_unprivileged_userns
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          unshare -Ur true
+
+      # A tela padrão do runner é menor que a janela do app (1440x900) e o T-R2 falha no controle.
+      - name: Windows - tela de 1920x1080
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ler = 'Add-Type -AssemblyName System.Windows.Forms; $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds; "$($b.Width)x$($b.Height)"'
+          $antes = pwsh -NoProfile -Command $ler
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          $depois = pwsh -NoProfile -Command $ler
+          "::notice title=tela windows::antes $antes; depois $depois"
+
+      - name: Electron - T-R2 a T-R7 (desenvolvimento)
+        working-directory: apps/electron
+        timeout-minutes: 15
+        env:
+          CATCORE: ${{ github.workspace }}/core/target/release/catcore${{ runner.os == 'Windows' && '.exe' || '' }}
+        run: |
+          set -o pipefail
+          # No Ubuntu não há tela: o xvfb cria um X11 virtual maior que a janela do app (1440x900).
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            xvfb-run -a --server-args="-screen 0 1920x1080x24" npm test -- --tm-sintetico 100000 2>&1 | tee ../../fumaca-logs/electron-dev.log
+          else
+            npm test -- --tm-sintetico 100000 2>&1 | tee ../../fumaca-logs/electron-dev.log
+          fi
+
+      - name: Resumo
+        if: always()
+        run: |
+          log=fumaca-logs/electron-dev.log
+          [ -f "$log" ] || exit 0
+          grep -E "PASSOU|FALHOU|TODOS PASSARAM|HÁ FALHAS|FATAL" "$log" | while IFS= read -r l; do
+            echo "::notice title=dev ${{ matrix.os }}::$l"
+          done
+
+      - name: Publicar resultado e logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fumaca-${{ matrix.os }}
+          path: |
+            apps/electron/test-result.json
+            fumaca-logs/
+          if-no-files-found: warn
