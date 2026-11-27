@@ -152,7 +152,8 @@ export async function rodarTestes(win: BrowserWindow, _doc?: string): Promise<bo
   });
 
   const todos = resultados.every((r) => r.ok);
-  writeFileSync(path.resolve(__dirname, "../test-result.json"), JSON.stringify({ quando: new Date().toISOString(), resultados }, null, 2));
+  // TEST_RESULT: caminho do resultado quando o app está empacotado (a pasta do código é somente leitura).
+  writeFileSync(process.env.TEST_RESULT || path.resolve(__dirname, "../test-result.json"),JSON.stringify({ quando: new Date().toISOString(), resultados }, null, 2));
   console.log(todos ? "TODOS PASSARAM" : "HÁ FALHAS");
   return todos;
 }
