@@ -110,6 +110,38 @@ jobs:
             npm test -- --tm-sintetico 100000 2>&1 | tee ../../fumaca-logs/electron-dev.log
           fi
 
+      # Wayland: tentativa. Uma falha não derruba o workflow; o resultado sai nos avisos e no relatório.
+      # Sem DISPLAY, o app não tem como cair de volta no X11.
+      - name: Ubuntu Wayland (Weston sem tela) - T-R2 a T-R7
+        id: wayland
+        if: runner.os == 'Linux'
+        continue-on-error: true
+        timeout-minutes: 15
+        env:
+          CATCORE: ${{ github.workspace }}/core/target/release/catcore
+          TEST_RESULT: ${{ github.workspace }}/fumaca-logs/test-result-wayland.json
+        run: |
+          set -o pipefail
+          sudo apt-get update -q
+          sudo apt-get install -y -q weston 2>&1 | tee fumaca-logs/weston-install.log
+          weston --version 2>&1 | tee fumaca-logs/weston-versao.txt
+          export XDG_RUNTIME_DIR="$RUNNER_TEMP/xdg"
+          mkdir -p -m 700 "$XDG_RUNTIME_DIR"
+          unset DISPLAY
+          weston --backend=headless --renderer=pixman --width=1920 --height=1080 --idle-time=0             --socket=wayland-fumaca --log="$GITHUB_WORKSPACE/fumaca-logs/weston.log" &
+          weston_pid=$!
+          trap 'kill $weston_pid 2>/dev/null || true' EXIT
+          for i in $(seq 50); do [ -S "$XDG_RUNTIME_DIR/wayland-fumaca" ] && break; sleep 0.2; done
+          test -S "$XDG_RUNTIME_DIR/wayland-fumaca"
+          export WAYLAND_DISPLAY=wayland-fumaca
+          cd apps/electron
+          npm test -- --tm-sintetico 100000 --ozone-platform=wayland 2>&1 | tee ../../fumaca-logs/electron-wayland.log
+
+      - name: Ubuntu Wayland - resultado
+        if: runner.os == 'Linux' && !cancelled()
+        run: |
+          echo "::notice title=wayland::$(weston --version 2>/dev/null) - ${{ steps.wayland.outcome }}"
+
       # Pacotes: só macOS e Ubuntu (o Windows continua com harness/empacotar.py).
       # Os testes do pacote rodam sem CATCORE, para o app usar o núcleo que vai dentro dele.
       # Rodam mesmo se o teste de desenvolvimento falhar, para o registro ficar completo.
