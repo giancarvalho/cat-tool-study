@@ -112,8 +112,9 @@ jobs:
 
       # Pacotes: só macOS e Ubuntu (o Windows continua com harness/empacotar.py).
       # Os testes do pacote rodam sem CATCORE, para o app usar o núcleo que vai dentro dele.
+      # Rodam mesmo se o teste de desenvolvimento falhar, para o registro ficar completo.
       - name: Pacote - gerar
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && !cancelled()
         working-directory: apps/electron
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
@@ -129,7 +130,7 @@ jobs:
           done
 
       - name: Pacote macOS (.zip) - T-R2 a T-R7
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && !cancelled()
         timeout-minutes: 15
         env:
           CORPUS_DIR: ${{ github.workspace }}/corpus/out
@@ -140,7 +141,7 @@ jobs:
           "$RUNNER_TEMP/zip/catstudy-electron.app/Contents/MacOS/catstudy-electron" --teste --tm-sintetico 100000 2>&1 | tee fumaca-logs/electron-zip.log
 
       - name: Pacote Ubuntu (.AppImage) - T-R2 a T-R7
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && !cancelled()
         timeout-minutes: 15
         env:
           CORPUS_DIR: ${{ github.workspace }}/corpus/out
@@ -172,7 +173,7 @@ jobs:
           for log in fumaca-logs/electron-*.log; do
             [ -f "$log" ] || continue
             nome=$(basename "$log" .log)
-            grep -E "PASSOU|FALHOU|TODOS PASSARAM|HÁ FALHAS|FATAL" "$log" | paste -sd'|' | while IFS= read -r l; do
+            grep -E "PASSOU|FALHOU|TODOS PASSARAM|HÁ FALHAS|FATAL" "$log" | paste -sd'|' - | while IFS= read -r l; do
               echo "::notice title=${nome#electron-} ${{ matrix.os }}::$l"
             done
           done
