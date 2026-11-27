@@ -104,11 +104,16 @@ export class VList {
   scrollToIndex(i: number) {
     const sc = this.o.scroller;
     i = Math.max(0, Math.min(this.h.length - 1, i));
-    const t = this.top[i],
-      b = this.top[i + 1];
-    if (t < sc.scrollTop) sc.scrollTop = t;
-    else if (b > sc.scrollTop + sc.clientHeight) sc.scrollTop = Math.max(0, b - sc.clientHeight);
-    this.render();
+    // A rolagem usa alturas estimadas; se a medição empurrar a linha para fora da vista, reajusta.
+    for (let pass = 0; pass < 3; pass++) {
+      const t = this.top[i],
+        b = this.top[i + 1];
+      if (t < sc.scrollTop) sc.scrollTop = t;
+      else if (b > sc.scrollTop + sc.clientHeight) sc.scrollTop = Math.max(0, b - sc.clientHeight);
+      else if (pass) break;
+      this.render();
+      if (this.h[i] > sc.clientHeight) break; // linha mais alta que a vista: não há posição em que caiba
+    }
   }
   isVisible(i: number): boolean {
     const sc = this.o.scroller;
