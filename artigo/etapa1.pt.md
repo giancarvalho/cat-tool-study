@@ -41,7 +41,7 @@ Para um editor desktop de documentos estruturados (ferramenta CAT), com trabalho
 | M1 | Completo | 8,1–8,2 | 8,3–8,5 | 6,2–7,4 | 11,0–11,2 |
 | M3 confirmar (< 50) | Restrito | 16,5–22,1 | 10,7–12,6 | 15,1–38,4 | 14,9–28,6 |
 | M6 mesclar/dividir (< 100), pior p95 | Restrito | 34,4 | 23,1 | 32,3 | 33,3 |
-| M8 busca na memória (< 100) | Restrito | 14,9–23,5 | 11,9–13,4 | 13,3–21,3 | 13,7–24,3 |
+| M8 busca por concordância (< 100) | Restrito | 14,9–23,5 | 11,9–13,4 | 13,3–21,3 | 13,7–24,3 |
 | M5 abrir 10 000 segmentos (< 2 000), p50 | Restrito | 656 | 483 | 1 117 | 595 |
 
 - As 308 combinações com meta (app, perfil, documento, métrica, passo) ficaram como "atingida".
@@ -145,7 +145,7 @@ Regra do pré-registro; as escolhas de agregação que ele não fixava estão na
 - **Front-end compartilhado** entre Electron e Tauri: não representa o esforço de quem começa pelo Tauri. Os dois receberam a mesma correção das setas ao lado de tags no ProseMirror.
 - **Avalonia** reflete um editor feito pelo estudo, não o RichTextEditor do fornecedor. **Flutter** representa um editor específico (Fleather), não o framework em geral.
 - **Memória:** uma execução de 60 minutos por candidato, só no Restrito, um documento aberto por vez (o pré-registro citava três). O M7 do Flutter foi refeito por uma lacuna sem resposta na primeira execução.
-- **M8** com 51 769 pares, não os 100 mil previstos. Temperatura da CPU não disponível. Exportação de XLSX não implementada. Prévia compilada só sob demanda. IME de CJK fora do protótipo.
+- **M8** com 51 769 pares, não os 100 mil previstos, e só no modo de concordância (texto contido): o modo de memória (similaridade), previsto na Emenda 3, não foi medido. Temperatura da CPU não disponível. Exportação de XLSX não implementada. Prévia compilada só sob demanda. IME de CJK fora do protótipo.
 - **Uso de IA:** implementação, harness, análise e este rascunho foram produzidos com um agente de IA, sob decisões do autor.
 
 ## 6. Próximos passos

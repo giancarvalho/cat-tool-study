@@ -41,7 +41,7 @@ For a desktop editor of structured documents (a CAT tool) with offline work, a s
 | M1 | Full | 8.1–8.2 | 8.3–8.5 | 6.2–7.4 | 11.0–11.2 |
 | M3 confirm (< 50) | Restricted | 16.5–22.1 | 10.7–12.6 | 15.1–38.4 | 14.9–28.6 |
 | M6 merge/split (< 100), worst p95 | Restricted | 34.4 | 23.1 | 32.3 | 33.3 |
-| M8 memory search (< 100) | Restricted | 14.9–23.5 | 11.9–13.4 | 13.3–21.3 | 13.7–24.3 |
+| M8 concordance search (< 100) | Restricted | 14.9–23.5 | 11.9–13.4 | 13.3–21.3 | 13.7–24.3 |
 | M5 open 10,000 segments (< 2,000), p50 | Restricted | 656 | 483 | 1,117 | 595 |
 
 - All 308 combinations with a target (app, profile, document, metric, step) were met.
@@ -145,7 +145,7 @@ Pre-registered rule; the aggregation choices it left open are in Amendment 11, *
 - Electron and Tauri **share a front end**, so Tauri's figures do not represent the effort of starting with Tauri. Both received the same ProseMirror fix for arrow keys next to tags.
 - **Avalonia** reflects an editor written for the study, not the vendor's RichTextEditor. **Flutter** represents one editor (Fleather), not the framework as a whole.
 - **Memory:** one 60-minute run per candidate, Restricted only, one document open at a time (the pre-registration mentioned three). Flutter's run was repeated because of an unresponsive gap in the first one.
-- **M8** uses 51,769 pairs, not the planned 100,000. CPU temperature unavailable. No XLSX export. Compiled preview on demand only. CJK IME out of scope.
+- **M8** uses 51,769 pairs, not the planned 100,000, and only concordance mode (substring match): the translation-memory similarity mode required by Amendment 3 was not measured. CPU temperature unavailable. No XLSX export. Compiled preview on demand only. CJK IME out of scope.
 - **AI use:** implementation, harness, analysis and this draft were produced with an AI agent, under the author's decisions.
 
 ## 6. Next steps
