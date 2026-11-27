@@ -1,0 +1,8 @@
+ocioso                 voltas 30 ops     0 dur   159s | catstudy: 286->283 MB, -1.55 MB/min | catcore: 2->2 MB, +0.00 MB/min | handles 407->402
+navegar                voltas 517 ops  1034 dur   156s | catstudy: 291->336 MB, +23.44 MB/min, +60.5 KB/op | catcore: 2->2 MB, +0.00 MB/min | handles 413->408
+digitar                voltas 90 ops  1800 dur   142s | catstudy: 285->283 MB, +1.18 MB/min, +1.6 KB/op | catcore: 2->2 MB, +0.00 MB/min | handles 410->409
+confirmar              voltas 681 ops   681 dur   164s | catstudy: 282->290 MB, +0.76 MB/min, +3.1 KB/op | catcore: 2->2 MB, +0.09 MB/min | handles 408->405
+mesclar_dividir        voltas 100 ops   200 dur   142s | catstudy: 287->293 MB, +4.05 MB/min, +49.1 KB/op | catcore: 2->3 MB, +0.55 MB/min | handles 413->410
+trocar_doc             voltas 59 ops    59 dur   158s | catstudy: 298->305 MB, +1.78 MB/min, +81.1 KB/op | catcore: 7->34 MB, +17.38 MB/min | handles 416->406
+
+[exited with code 0]

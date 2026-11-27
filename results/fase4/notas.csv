@@ -1,0 +1,5 @@
+app,desempenho,memoria,esforco,ecossistema,instalador,parcial_sem_esforco,parcial_com_esforco_linhas
+electron,4.75,4,5,4,1,4.027,4.257
+tauri,4.75,4,5,3,5,4.191,4.382
+avalonia,4.857,5,5,4,1,4.379,4.526
+flutter,4.714,1,5,3,1,2.886,3.385

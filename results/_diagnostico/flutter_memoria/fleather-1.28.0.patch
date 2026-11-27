@@ -1,0 +1,34 @@
+--- a/packages/fleather/lib/src/widgets/editor.dart
++++ b/packages/fleather/lib/src/widgets/editor.dart
+@@ -1433,6 +1433,12 @@
+ 
+     performSpellCheck(widget.controller.plainTextEditingValue.text);
+ 
++    if (widget.clipboardStatus != oldWidget.clipboardStatus) {
++      oldWidget.clipboardStatus.removeListener(_onChangedClipboardStatus);
++      oldWidget.clipboardStatus.dispose();
++      widget.clipboardStatus.addListener(_onChangedClipboardStatus);
++    }
++
+     _cursorController.showCursor.value = widget.showCursor;
+     _cursorController.style = widget.cursorStyle;
+ 
+@@ -1494,6 +1500,7 @@
+     _cursorController.dispose();
+     clipboardStatus.removeListener(_onChangedClipboardStatus);
+     clipboardStatus.dispose();
++    WidgetsBinding.instance.removeObserver(this);
+     super.dispose();
+   }
+ 
+@@ -1518,8 +1525,8 @@
+     // When a new document node is added or removed due to a line/block
+     // insertion or deletion, we must wait for next frame the ensure the
+     // RenderEditor's child list reflects the new document node structure
+-    SchedulerBinding.instance.addPersistentFrameCallback((timeStamp) {
+-      _updateOrDisposeSelectionOverlayIfNeeded();
++    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
++      if (mounted) _updateOrDisposeSelectionOverlayIfNeeded();
+     });
+     _verticalSelectionUpdateAction.stopCurrentVerticalRunIfSelectionChanges();
+   }

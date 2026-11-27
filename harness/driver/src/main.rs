@@ -107,6 +107,26 @@ impl Log {
     }
 }
 
+/// Guarda de foco (Emenda 7): antes de cada evento, a janela em primeiro plano tem de ser do app medido.
+/// Se não for, solta os modificadores, encerra o app e sai com código 3 sem enviar mais nada.
+/// Sem alvo definido (autoteste), não faz nada.
+fn conferir_foco() {
+    let alvo = unsafe { ALVO_PID };
+    if alvo == 0 {
+        return;
+    }
+    let mut pid = 0u32;
+    unsafe { GetWindowThreadProcessId(GetForegroundWindow(), &mut pid) };
+    if pid != alvo {
+        for m in [VK_SHIFT, VK_CTRL, VK_ALT] {
+            evento(m, true);
+        }
+        eprintln!("FOCO PERDIDO: primeiro plano pid {} (app pid {}); execução abortada em t_us={}", pid, alvo, agora_us());
+        let _ = Command::new("taskkill").args(["/T", "/F", "/PID", &alvo.to_string()]).output();
+        std::process::exit(3);
+    }
+}
+
 /// Envia "ctrl+shift+d" etc. Devolve o instante do keydown da tecla final.
 fn combo(c: &str) -> Result<u64> {
     let partes: Vec<&str> = c.split('+').collect();
@@ -120,11 +140,13 @@ fn combo(c: &str) -> Result<u64> {
             _ => 0,
         })
         .collect();
+    conferir_foco();
     for m in &mv {
         evento(*m, false);
         std::thread::sleep(Duration::from_millis(5));
     }
     let vk = vk_nome(tecla[0])?;
+    conferir_foco();
     let t = agora_us();
     evento(vk, false);
     std::thread::sleep(Duration::from_millis(15));
@@ -136,6 +158,7 @@ fn combo(c: &str) -> Result<u64> {
 }
 
 fn caractere(ch: char) -> u64 {
+    conferir_foco();
     let r = unsafe { VkKeyScanW(ch as u16) };
     if r == -1 {
         // sem tecla no layout: envia como Unicode
@@ -298,6 +321,7 @@ fn executar(passos: &[Value], log: &mut Log, cont: &mut usize) -> Result<()> {
                     while agora_us() < alvo {
                         std::hint::spin_loop();
                     }
+                    conferir_foco();
                     roda(delta);
                 }
                 log.linha("roda_fim", *cont, "", agora_us());
@@ -404,7 +428,10 @@ fn main() -> Result<()> {
     }
     esperar(800);
     registrar_memoria("aberto");
-    focar(child.id())?;
+    if let Err(e) = focar(child.id()) {
+        let _ = child.kill();
+        return Err(e);
+    }
     // tecla de aquecimento: algumas cascas (WebView2) descartam a primeira tecla enquanto passam o foco ao conteúdo
     combo("esc")?; // Esc só descarta o rascunho vazio; serve de tecla de aquecimento
     esperar(500);

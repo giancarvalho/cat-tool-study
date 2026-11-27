@@ -1,0 +1,2 @@
+run_id,app,metrica,passo,t_recebe_us,t_editor_us,t_previa_us,t_core_us,valor,unidade,erro
+40904,tauri,M5,abrir,1795683287388900,,,,483,ms,pior_caso.docx

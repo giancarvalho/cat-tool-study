@@ -1,0 +1,146 @@
+[
+ {
+  "etapa": "restrito-medicao",
+  "nome": "f3-restrito-medicao-pequeno",
+  "semente": 20261125,
+  "cmd": "harness/rodada.py --nome f3-restrito-medicao-pequeno --doc corpus/out/pequeno.docx --perfil restrito --reps 10 --semente 20261125 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15"
+ },
+ {
+  "etapa": "restrito-medicao",
+  "nome": "f3-restrito-medicao-medio",
+  "semente": 20261126,
+  "cmd": "harness/rodada.py --nome f3-restrito-medicao-medio --doc corpus/out/medio.docx --perfil restrito --reps 10 --semente 20261126 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15"
+ },
+ {
+  "etapa": "restrito-medicao",
+  "nome": "f3-restrito-medicao-longo",
+  "semente": 20261127,
+  "cmd": "harness/rodada.py --nome f3-restrito-medicao-longo --doc corpus/out/longo.docx --perfil restrito --reps 10 --semente 20261127 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15"
+ },
+ {
+  "etapa": "restrito-medicao",
+  "nome": "f3-restrito-medicao-pior_caso",
+  "semente": 20261128,
+  "cmd": "harness/rodada.py --nome f3-restrito-medicao-pior_caso --doc corpus/out/pior_caso.docx --perfil restrito --reps 10 --semente 20261128 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15"
+ },
+ {
+  "etapa": "restrito-medicao",
+  "nome": "f3-restrito-medicao-real_layout",
+  "semente": 20261129,
+  "cmd": "harness/rodada.py --nome f3-restrito-medicao-real_layout --doc corpus/real/real_layout.docx --perfil restrito --reps 10 --semente 20261129 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15"
+ },
+ {
+  "etapa": "restrito-medicao",
+  "nome": "f3-restrito-medicao-real_texto",
+  "semente": 20261130,
+  "cmd": "harness/rodada.py --nome f3-restrito-medicao-real_texto --doc corpus/real/real_texto.docx --perfil restrito --reps 10 --semente 20261130 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15"
+ },
+ {
+  "etapa": "restrito-medicao",
+  "nome": "f3-restrito-medicao-real_pptx",
+  "semente": 20261131,
+  "cmd": "harness/rodada.py --nome f3-restrito-medicao-real_pptx --doc corpus/real/real_pptx.pptx --perfil restrito --reps 10 --semente 20261131 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15"
+ },
+ {
+  "etapa": "restrito-m7",
+  "nome": "f3-restrito-m7",
+  "semente": 20261132,
+  "cmd": "harness/rodada.py --nome f3-restrito-m7 --doc corpus/out/pequeno.docx --perfil restrito --reps 1 --semente 20261132 --roteiro spec/roteiros/uso_prolongado.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15 --docs-ciclo corpus/out/pequeno.docx;corpus/out/medio.docx;corpus/out/longo.docx --memoria-cada 60"
+ },
+ {
+  "etapa": "restrito-m4",
+  "nome": "f3-restrito-m4-pequeno",
+  "semente": 20261133,
+  "cmd": "harness/rodada.py --nome f3-restrito-m4-pequeno --doc corpus/out/pequeno.docx --perfil restrito --reps 10 --semente 20261133 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "restrito-m4",
+  "nome": "f3-restrito-m4-medio",
+  "semente": 20261134,
+  "cmd": "harness/rodada.py --nome f3-restrito-m4-medio --doc corpus/out/medio.docx --perfil restrito --reps 10 --semente 20261134 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "restrito-m4",
+  "nome": "f3-restrito-m4-longo",
+  "semente": 20261135,
+  "cmd": "harness/rodada.py --nome f3-restrito-m4-longo --doc corpus/out/longo.docx --perfil restrito --reps 10 --semente 20261135 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "restrito-m4",
+  "nome": "f3-restrito-m4-pior_caso",
+  "semente": 20261136,
+  "cmd": "harness/rodada.py --nome f3-restrito-m4-pior_caso --doc corpus/out/pior_caso.docx --perfil restrito --reps 10 --semente 20261136 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "restrito-m4",
+  "nome": "f3-restrito-m4-real_layout",
+  "semente": 20261137,
+  "cmd": "harness/rodada.py --nome f3-restrito-m4-real_layout --doc corpus/real/real_layout.docx --perfil restrito --reps 10 --semente 20261137 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "restrito-m4",
+  "nome": "f3-restrito-m4-real_texto",
+  "semente": 20261138,
+  "cmd": "harness/rodada.py --nome f3-restrito-m4-real_texto --doc corpus/real/real_texto.docx --perfil restrito --reps 10 --semente 20261138 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "restrito-m4",
+  "nome": "f3-restrito-m4-real_pptx",
+  "semente": 20261139,
+  "cmd": "harness/rodada.py --nome f3-restrito-m4-real_pptx --doc corpus/real/real_pptx.pptx --perfil restrito --reps 10 --semente 20261139 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "completo-medicao",
+  "nome": "f3-completo-medicao-pequeno",
+  "semente": 20261140,
+  "cmd": "harness/rodada.py --nome f3-completo-medicao-pequeno --doc corpus/out/pequeno.docx --perfil completo --reps 10 --semente 20261140 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu nvidia --pausa 15"
+ },
+ {
+  "etapa": "completo-medicao",
+  "nome": "f3-completo-medicao-pior_caso",
+  "semente": 20261141,
+  "cmd": "harness/rodada.py --nome f3-completo-medicao-pior_caso --doc corpus/out/pior_caso.docx --perfil completo --reps 10 --semente 20261141 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu nvidia --pausa 15"
+ },
+ {
+  "etapa": "completo-medicao",
+  "nome": "f3-completo-medicao-real_texto",
+  "semente": 20261142,
+  "cmd": "harness/rodada.py --nome f3-completo-medicao-real_texto --doc corpus/real/real_texto.docx --perfil completo --reps 10 --semente 20261142 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu nvidia --pausa 15"
+ },
+ {
+  "etapa": "completo-medicao",
+  "nome": "f3-completo-medicao-real_pptx",
+  "semente": 20261143,
+  "cmd": "harness/rodada.py --nome f3-completo-medicao-real_pptx --doc corpus/real/real_pptx.pptx --perfil completo --reps 10 --semente 20261143 --roteiro spec/roteiros/medicao.json --candidatos harness/candidatos_pacote.json --gpu nvidia --pausa 15"
+ },
+ {
+  "etapa": "completo-m4",
+  "nome": "f3-completo-m4-pequeno",
+  "semente": 20261144,
+  "cmd": "harness/rodada.py --nome f3-completo-m4-pequeno --doc corpus/out/pequeno.docx --perfil completo --reps 10 --semente 20261144 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu nvidia --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "completo-m4",
+  "nome": "f3-completo-m4-pior_caso",
+  "semente": 20261145,
+  "cmd": "harness/rodada.py --nome f3-completo-m4-pior_caso --doc corpus/out/pior_caso.docx --perfil completo --reps 10 --semente 20261145 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu nvidia --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "completo-m4",
+  "nome": "f3-completo-m4-real_texto",
+  "semente": 20261146,
+  "cmd": "harness/rodada.py --nome f3-completo-m4-real_texto --doc corpus/real/real_texto.docx --perfil completo --reps 10 --semente 20261146 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu nvidia --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "completo-m4",
+  "nome": "f3-completo-m4-real_pptx",
+  "semente": 20261147,
+  "cmd": "harness/rodada.py --nome f3-completo-m4-real_pptx --doc corpus/real/real_pptx.pptx --perfil completo --reps 10 --semente 20261147 --roteiro spec/roteiros/rolagem.json --candidatos harness/candidatos_pacote.json --gpu nvidia --pausa 15 --presentmon"
+ },
+ {
+  "etapa": "restrito-m7-flutter",
+  "nome": "f3-restrito-m7-flutter",
+  "semente": 20261148,
+  "cmd": "harness/rodada.py --nome f3-restrito-m7-flutter --doc corpus/out/pequeno.docx --perfil restrito --reps 1 --semente 20261148 --roteiro spec/roteiros/uso_prolongado.json --candidatos harness/candidatos_pacote.json --gpu integrada --pausa 15 --docs-ciclo corpus/out/pequeno.docx;corpus/out/medio.docx;corpus/out/longo.docx --memoria-cada 60 --so flutter"
+ }
+]

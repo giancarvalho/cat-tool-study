@@ -1,0 +1,14 @@
+criterio,variante,nota_electron,nota_tauri,nota_avalonia,nota_flutter,total_electron,total_tauri,total_avalonia,total_flutter
+desempenho,principal,4.75,4.75,4.86,4.71,4.03,4.19,4.38,2.89
+desempenho,dois_perfis,4.75,4.75,4.91,4.73,4.03,4.19,4.4,2.89
+desempenho,pior_p95,4.75,4.75,4.75,4.5,4.03,4.19,4.34,2.8
+desempenho,m4_com_pequeno,4.61,4.61,4.71,4.71,3.97,4.13,4.32,2.89
+desempenho,tela_parada_sem_m4,4.33,4.25,4.33,4.42,3.86,3.99,4.17,2.77
+memoria,principal,4,4,5,1,4.03,4.19,4.38,2.89
+memoria,m7_maximo,4,4,5,1,4.03,4.19,4.38,2.89
+memoria,doc_aberto,4,5,5,3,4.03,4.5,4.38,3.5
+memoria,flutter_corrigido,4,4,5,4,4.03,4.19,4.38,3.81
+esforco,fora,,,,,4.03,4.19,4.38,2.89
+esforco,linhas,5,5,5,5,4.26,4.38,4.53,3.38
+ecossistema,principal,4,3,4,3,4.03,4.19,4.38,2.89
+ecossistema,tauri_com_bibliotecas_js,4,4,4,3,4.03,4.39,4.38,2.89

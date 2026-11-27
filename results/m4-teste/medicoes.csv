@@ -1,0 +1,9 @@
+rodada,app,perfil,documento,repeticao,aquecimento,metrica,passo,valor_ms,entrada_ms
+m4-teste,flutter,completo,pequeno.docx,1,1,M5,abrir,226.213,
+m4-teste,flutter,completo,pequeno.docx,1,1,M9,inicio,437.204,
+m4-teste,electron,completo,pequeno.docx,1,1,M5,abrir,207.0,
+m4-teste,electron,completo,pequeno.docx,1,1,M9,inicio,413.086,
+m4-teste,avalonia,completo,pequeno.docx,1,1,M5,abrir,199.83,
+m4-teste,avalonia,completo,pequeno.docx,1,1,M9,inicio,1937.796,
+m4-teste,tauri,completo,pequeno.docx,1,1,M5,abrir,62.4,
+m4-teste,tauri,completo,pequeno.docx,1,1,M9,inicio,384.353,

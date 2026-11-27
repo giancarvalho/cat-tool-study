@@ -1,0 +1,76 @@
+{
+  "semente": 20261143,
+  "commit": "9659d7b6cffa687c1d96ffbef232bd4464949717",
+  "arvore_suja": true,
+  "doc": "corpus/real/real_pptx.pptx",
+  "perfil": "completo",
+  "reps": 10,
+  "roteiro": "spec/roteiros/medicao.json",
+  "gpu": "nvidia",
+  "tmx": "docs/translation memory",
+  "docs_ciclo": "",
+  "ordens": [
+    [
+      "avalonia",
+      "electron",
+      "tauri",
+      "flutter"
+    ],
+    [
+      "tauri",
+      "electron",
+      "avalonia",
+      "flutter"
+    ],
+    [
+      "avalonia",
+      "electron",
+      "tauri",
+      "flutter"
+    ],
+    [
+      "avalonia",
+      "tauri",
+      "electron",
+      "flutter"
+    ],
+    [
+      "electron",
+      "flutter",
+      "tauri",
+      "avalonia"
+    ],
+    [
+      "electron",
+      "flutter",
+      "avalonia",
+      "tauri"
+    ],
+    [
+      "avalonia",
+      "tauri",
+      "electron",
+      "flutter"
+    ],
+    [
+      "electron",
+      "flutter",
+      "tauri",
+      "avalonia"
+    ],
+    [
+      "avalonia",
+      "tauri",
+      "electron",
+      "flutter"
+    ],
+    [
+      "tauri",
+      "flutter",
+      "electron",
+      "avalonia"
+    ]
+  ],
+  "falhas": [],
+  "completa": true
+}

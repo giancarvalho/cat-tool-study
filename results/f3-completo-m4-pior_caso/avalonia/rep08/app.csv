@@ -1,0 +1,2 @@
+run_id,app,metrica,passo,t_recebe_us,t_editor_us,t_previa_us,t_core_us,valor,unidade,erro
+49392,avalonia,M5,abrir,1795683251953118,,,,1125.461,ms,pior_caso.docx

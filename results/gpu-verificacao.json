@@ -1,0 +1,32 @@
+{
+ "tauri": {
+  "integrada": {
+   "pids_do_app": [
+    6320,
+    13372,
+    14212,
+    15164,
+    19148,
+    20140,
+    26272
+   ],
+   "pids_na_nvidia": [],
+   "usou_nvidia": false
+  },
+  "nvidia": {
+   "pids_do_app": [
+    4228,
+    10068,
+    11724,
+    14384,
+    20112,
+    21000,
+    24900
+   ],
+   "pids_na_nvidia": [
+    21000
+   ],
+   "usou_nvidia": true
+  }
+ }
+}

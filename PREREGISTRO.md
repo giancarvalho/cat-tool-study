@@ -120,3 +120,69 @@ Não altera critérios, metas nem pesos; define duas prévias, ambas implementad
 **Motivo.** Com a composição padrão do Avalonia 12 no Windows (DirectComposition), o PresentMon não registra nenhum quadro com o PID do app: os quadros saem pelo `dwm.exe`, que atende outras janelas, e o M4 não é separável. Decidido por Gian: tentar DXGI primeiro; se não funcionasse, M4 do Avalonia seria "n/d".
 **Mudança.** `Win32PlatformOptions.CompositionMode = LowLatencyDxgiSwapChain` no `Program.cs` do candidato Avalonia, para todas as métricas (não só o M4). Resultado do teste de validação (1 repetição, não é medição): o PresentMon passa a listar `CatStudyAvalonia.exe` com 547 quadros DXGI na rolagem.
 **Efeito.** Rodadas anteriores do Avalonia (composição padrão) não valem para a análise e serão refeitas. A mudança será declarada no artigo.
+
+## Emenda 7 (2026-11-26, aprovada pelo Gian): guarda de foco, repetição de falhas e rodadas refeitas
+
+Não altera critérios, metas nem pesos. Definida no meio da Fase 3, depois de conferir contagens e integridade de 16 rodadas e **antes** de analisar os resultados de latência.
+
+**Motivo.** (a) O driver só conferia o foco no início de cada execução; em `f3-completo-medicao-pior_caso` (Flutter, repetição 8, interrompida) as teclas passaram a ir para outra janela. (b) Execuções que falhavam não eram repetidas nem apareciam no log da Fase 3. (c) No M7 do Flutter, 9 dos 360 ciclos ficaram sem resposta num bloco de cerca de 91 s, sem causa determinada.
+
+**Mudanças.**
+1. O driver confere, antes de cada tecla e de cada evento de roda, se a janela em primeiro plano é do app medido; se não for, encerra o app e aborta a execução sem enviar mais eventos.
+2. Execução que falha (foco, app que não abre em 60 s) é repetida na hora, até 3 tentativas, com 60 s de intervalo. As tentativas falhas ficam em `<rodada>/_falhas/`, fora da análise, e são listadas em `rodada.json`. Rodada com execução não recuperada é marcada incompleta e refeita.
+3. Refeitas por inteiro: `f3-restrito-medicao-real_texto` (Electron, repetição 2, app não abriu) e `f3-restrito-m4-pior_caso` (Flutter, repetição 8, idem). Os dados originais ficam em `results/_descartadas/`.
+4. M7 do Flutter refeito em `f3-restrito-m7-flutter`; ele substitui as linhas do Flutter em `f3-restrito-m7`, que são mantidas e declaradas. Os demais candidatos do M7 não mudam.
+5. As rodadas anteriores a esta emenda foram feitas sem a guarda; o artigo declara isso.
+
+**Pendência de análise.** `harness/juntar.py` descarta respostas acima de 1 s e atribui cada resposta ao último envio anterior, o que pode omitir ou encurtar latências altas. Os dados brutos estão preservados; o pareamento será corrigido e todas as rodadas reprocessadas antes de qualquer resultado ser reportado.
+
+**Correção aplicada (2026-11-26, antes da primeira leitura dos resultados).** Pareamento em `harness/juntar.py`: por ordem de envio, sem corte de 1 s (limite de sanidade de 60 s). `harness/resultados.py` reprocessa todas as rodadas a partir dos CSVs brutos.
+O relógio do Flutter marca a chegada até 0,24 ms antes do envio do driver, o que deslocava o pareamento em uma tecla (falsos 1,35 s no p95 de M3/M6). O pareamento aceita até 5 ms de folga; verificado após a primeira consolidação, e todas as rodadas foram reprocessadas.
+
+## Emenda 8 (2026-11-26, aprovada pelo Gian): validade das rodadas de medição
+
+Definida **depois** da primeira leitura dos resultados e **antes** de refazer as rodadas. Não altera metas nem pesos.
+
+**Motivo.** Em `f3-restrito-medicao-real_texto` (rodada refeita), `f3-completo-medicao-pior_caso`, `-real_texto` e `-real_pptx`, feitas em 26/11 entre 00:37 e 05:14, todas as execuções de Electron, Tauri e Avalonia mostraram M1 p50 de cerca de 11,5 a 13,5 ms, contra 4 a 7,4 ms nas repetições 2 a 10 das demais rodadas; o Flutter não mudou. Um teste alternando o driver com e sem a guarda de foco (`results/_diagnostico/ab_driver/`) deu 11 de 12 execuções rápidas e 1 lenta, nos dois grupos há execuções rápidas e a mesma assinatura já aparecia antes da guarda. Conclusão: estado esporádico da máquina, de causa não determinada.
+
+**Regra.** Em rodada com o roteiro `medicao.json`, se uma execução das repetições 2 em diante de Electron, Tauri ou Avalonia tiver M1 p50 acima de 9,5 ms, a rodada é interrompida e refeita inteira, após 15 minutos, até 4 tentativas; depois disso a sequência para. Não se escolhem nem se substituem execuções isoladas. As tentativas interrompidas ficam em `results/_descartadas/`. O Flutter fica fora da regra porque não mostrou o efeito. Nenhuma das rodadas mantidas viola a regra.
+
+**Aplicação.** As quatro rodadas acima são movidas para `results/_descartadas/` (sufixo `-estado_lento`) e refeitas com as mesmas sementes. A rodagem (M4) não é refeita: `f3-restrito-m4-pior_caso`, feita nesse período, tem quadros equivalentes aos da execução anterior fora dele; as rodadas M4 do perfil Completo não têm par para essa comparação, e o artigo declara isso.
+
+**Limitação declarada.** A regra usa a própria métrica para decidir a validade; ela pode descartar uma execução legitimamente lenta. O artigo reporta as rodadas descartadas e seus valores.
+
+## Emenda 9 (2026-11-26, aprovada pelo Gian): condição de tela nas rodadas de medição
+
+Substitui o diagnóstico da Emenda 8 ("causa não determinada"). Não altera metas nem pesos.
+
+**Motivo.** As duas primeiras tentativas sob a Emenda 8 foram invalidadas. Sondas curtas (`results/_diagnostico/tela_parada/`) mostraram que o fator é a tela: com algo sendo redesenhado, M1 p50 de 3,7 a 5,9 ms (18 sondas); com a tela parada, de 12,0 a 13,3 ms (18 sondas), sem sobreposição, em Electron e Avalonia. O mecanismo (composição do Windows, driver de vídeo ou painel) não foi determinado.
+
+**Mudança.** Nas rodadas com `medicao.json`, a `rodada.py` mantém uma janela de 90x90 com animação contínua, sempre por cima e sem foco (`harness/animador.py`). Custa processador e vídeo, igual para os quatro candidatos. A regra de validade da Emenda 8 continua.
+
+**Aplicação.** Só as quatro rodadas da Emenda 8 são refeitas, com as mesmas sementes. As quatro versões lentas (`results/_descartadas/*-estado_lento`), completas com 10 repetições, são reportadas à parte como sensibilidade à tela parada, condição próxima do uso real.
+
+**Limitações declaradas.** Não se sabe o que redesenhava a tela nas sete rodadas de medição mantidas (24 e 25/11); elas são aceitas porque estão na faixa rápida. Nelas não havia a janela de animação. As metas são julgadas pelas rodadas na condição padronizada; o artigo mostra também a tela parada.
+
+## Emenda 10 (2026-11-27, aprovada pelo Gian): sensibilidade do M7 com o Fleather corrigido
+
+Definida **depois** de conhecer o M7 oficial e **antes** de medir a versão corrigida. Não altera metas, pesos nem resultados oficiais.
+
+**Motivo.** O Flutter mostrou crescimento contínuo de memória (M7). Testes curtos (`results/_diagnostico/flutter_memoria/`) ligaram o crescimento na navegação a três pontos do Fleather 1.28.0 (última versão publicada) que retêm o editor descartado; com as três correções juntas (`harness/patches/fleather-1.28.0.patch`) o crescimento nesse teste caiu de 18,7 para 0,8 MB/min.
+
+**Medição.** Uma execução do roteiro `uso_prolongado.json` (60 min), perfil Restrito, com o pacote corrigido (`harness/flutter_corrigido.py`), mesmos documentos, semente (20261148), amostragem e regra de crescimento contínuo do M7 oficial; falhas são repetidas conforme a Emenda 7. Antes dela, os testes funcionais T-R2 a T-R7 e T-R9 no mesmo pacote.
+
+**Uso do resultado.** O Flutter continua avaliado, na pontuação, com a biblioteca como publicada. A versão corrigida é reportada à parte como sensibilidade, qualquer que seja o resultado.
+
+**Limitações declaradas.** Latências (M1 a M6, M8) não são medidas na versão corrigida; os testes funcionais cobrem comportamento por teclado, não seleção por mouse nem área de transferência; o patch não foi revisado pelos autores do Fleather.
+
+## Emenda 11 (2026-11-27, aprovada pelo Gian): cálculo da pontuação provisória da Etapa 1
+
+Escrita **depois** de conhecer os resultados. As seções 6 e 8 não fixam como juntar várias medições numa nota; as escolhas abaixo são usadas na pontuação provisória e as alternativas aparecem na sensibilidade (`results/fase4/sensibilidade.csv`).
+
+1. **Desempenho:** perfil Restrito; nota por métrica e documento (e passo), média por métrica, média das métricas 1, 2, 4 e 6.
+2. **M4:** o documento `pequeno` fica fora, porque a rolagem chega ao fim e os quadros "perdidos" não medem desempenho.
+3. **Memória:** mediana dos minutos 20 a 60 do M7; menos 1 ponto com crescimento contínuo.
+4. **Esforço:** as horas pré-registradas não foram contadas. O resultado principal deixa o critério **fora**; uma variante usa linhas de código próprias (Tauri = front-end reaproveitado mais ponte), o que é um substituto fraco.
+5. **Ecossistema:** Electron 4, Tauri 3, Avalonia 4, Flutter 3, a partir das fichas 25 a 29 (SQLite não foi levantado nas fichas e não gera desconto).
+6. **Instalador:** só o instalador, sem WebView2; tamanho de atualização não medido.
+7. **Consistência (28%):** não pontuada na Etapa 1. O total provisório é a média ponderada dos critérios disponíveis.

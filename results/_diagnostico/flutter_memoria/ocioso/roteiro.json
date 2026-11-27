@@ -1,0 +1,1 @@
+{"nome": "ocioso", "passos": [{"tipo": "abrir"}, {"tipo": "esperar", "ms": 3000}, {"tipo": "tecla", "combo": "ctrl+home", "atraso_ms": 300}, {"tipo": "tecla", "combo": "alt+down", "atraso_ms": 300}, {"tipo": "repetir", "vezes": 30, "passos": [{"tipo": "esperar", "ms": 5000}]}, {"tipo": "esperar", "ms": 2000}]}

@@ -1,7 +1,9 @@
 """Junta o CSV do driver (t_envio) com o CSV do app (t_recebe, t_editor, t_previa) e calcula a latência de ponta a ponta.
 Uso: python -I harness/juntar.py results/<run>/driver.csv results/<run>/electron.csv [saida.csv]
-Pareamento: cada tecla do driver com a primeira linha do app cujo t_recebe >= t_envio (mesmo relógio de parede, µs).
-Teclas sem resposta em 1 s (ex.: mesclar recusado) são contadas e não pareadas."""
+Pareamento (corrigido na Emenda 7), por passo e em ordem de envio: se o app gravou uma linha por tecla, a i-ésima
+linha é da i-ésima tecla; se faltam linhas (ex.: mesclar recusado), cada linha, da última para a primeira, fica com o
+envio livre mais recente anterior a ela. Não há corte de latência (só um limite de sanidade de 60 s).
+Teclas sem linha do app são contadas como sem resposta."""
 import bisect, csv, statistics, sys
 
 # passo do driver -> lista de (métrica, passo no app, campo de fim; None = t_recebe + valor interno do app)
@@ -13,7 +15,22 @@ PASSOS = {
     "buscar": [("M8", "buscar", None)],
     "previa": [("M11", "previa", None)],
 }
-TOLERANCIA_US = 1_000_000
+LIMITE_US = 60_000_000
+FOLGA_US = 5_000  # o relógio de alguns apps marca a chegada alguns ms antes do instante de envio do driver
+
+
+def parear(envios, linhas):
+    """envios: instantes ordenados; linhas: [(t_recebe, linha)] ordenadas. Devolve [(t_envio, t_recebe, linha)]."""
+    if len(envios) == len(linhas) and all(-FOLGA_US <= rec - t <= LIMITE_US for t, (rec, _) in zip(envios, linhas)):
+        return [(t, rec, r) for t, (rec, r) in zip(envios, linhas)]
+    pares, j = [], len(envios) - 1
+    for rec, r in reversed(linhas):
+        k = min(j, bisect.bisect_right(envios, rec + FOLGA_US) - 1)
+        if k < 0 or rec - envios[k] > LIMITE_US:
+            continue
+        pares.append((envios[k], rec, r))
+        j = k - 1
+    return pares[::-1]
 
 
 def juntar(driver_csv, app_csv):
@@ -23,17 +40,10 @@ def juntar(driver_csv, app_csv):
     for passo, specs in PASSOS.items():
         envios = sorted(int(r["t_envio_us"]) for r in drv if r["passo"] == passo)
         for metrica, passo_app, campo in specs:
-            linhas = sorted((int(r["t_recebe_us"]), r) for r in app if r["metrica"] == metrica and r["passo"] == passo_app and r["t_recebe_us"])
-            # cada linha do app é atribuída ao último envio anterior a ela; envios sem linha = teclas sem resposta
-            ultimo = -1
-            usados = 0
-            for rec, r in linhas:
-                k = bisect.bisect_right(envios, rec) - 1
-                if k < 0 or k <= ultimo or rec - envios[k] > TOLERANCIA_US:
-                    continue
-                ultimo = k
-                usados += 1
-                t = envios[k]
+            linhas = sorted(((int(r["t_recebe_us"]), r) for r in app if r["metrica"] == metrica and r["passo"] == passo_app and r["t_recebe_us"]), key=lambda x: x[0])
+            pares = parear(envios, linhas)
+            usados = len(pares)
+            for t, rec, r in pares:
                 fim = (int(r[campo]) - t) / 1000 if campo and r[campo] else (rec - t) / 1000 + float(r["valor"])
                 saida.append({"passo": passo, "metrica": metrica, "t_envio_us": t, "entrada_ms": round((rec - t) / 1000, 3), "app_ms": r["valor"], "ponta_a_ponta_ms": round(fim, 3)})
             if len(envios) - usados:

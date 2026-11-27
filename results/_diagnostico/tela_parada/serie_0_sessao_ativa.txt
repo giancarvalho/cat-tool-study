@@ -1,0 +1,1 @@
+Serie com a sessao do assistente trabalhando (12:58 a 13:00): 12/12 rapidas, M1 p50 3,7 a 5,9 ms. CSVs: pastas base_*.

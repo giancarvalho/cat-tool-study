@@ -1,0 +1,18 @@
+{
+  "semente": 1,
+  "commit": "bf8b5a37daec78cada9581a6b3f6fa9c7e3e3616",
+  "arvore_suja": true,
+  "doc": "corpus/out/pequeno.docx",
+  "perfil": "completo",
+  "reps": 1,
+  "roteiro": "spec/roteiros/rolagem.json",
+  "gpu": "",
+  "ordens": [
+    [
+      "flutter",
+      "electron",
+      "avalonia",
+      "tauri"
+    ]
+  ]
+}

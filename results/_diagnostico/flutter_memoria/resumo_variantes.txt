@@ -1,0 +1,7 @@
+navegar_base           voltas 517 ops  1034 dur   157s | catstudy: 296->334 MB, +18.73 MB/min, +48.6 KB/op | catcore: 1->1 MB, +0.00 MB/min | handles 413->409
+navegar_A              voltas 517 ops  1034 dur   157s | catstudy: 298->334 MB, +19.06 MB/min, +49.4 KB/op | catcore: 2->2 MB, +0.00 MB/min | handles 414->409
+navegar_B              voltas 517 ops  1034 dur   157s | catstudy: 297->342 MB, +19.93 MB/min, +51.6 KB/op | catcore: 1->1 MB, +0.00 MB/min | handles 414->410
+navegar_C              voltas 517 ops  1034 dur   157s | catstudy: 291->331 MB, +16.59 MB/min, +42.9 KB/op | catcore: 1->1 MB, +0.00 MB/min | handles 413->410
+navegar_ABC            voltas 517 ops  1034 dur   157s | catstudy: 285->285 MB, +0.77 MB/min, +2.0 KB/op | catcore: 1->1 MB, +0.00 MB/min | handles 414->407
+
+[exited with code 0]

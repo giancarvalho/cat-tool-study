@@ -4,7 +4,7 @@ results/<nome>/medicoes.csv. A repetição 1 é marcada como aquecimento (declar
 Uso: python -I harness/rodada.py --nome r1 --doc corpus/out/pequeno.docx --perfil completo|restrito --reps 10 --semente 20261124
         [--roteiro spec/roteiros/curto.json] [--candidatos harness/candidatos.json] [--so electron,tauri] [--pausa 15]
         [--gpu integrada|nvidia] [--memoria-cada 60]"""
-import argparse, csv, json, os, random, subprocess, sys, time
+import argparse, csv, json, os, random, shutil, statistics, subprocess, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from juntar import juntar  # noqa: E402
@@ -13,6 +13,11 @@ import ambiente  # noqa: E402
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PRESENTMON = os.path.join(RAIZ, "harness", "tools", "PresentMon-2.6.0-x64.exe")
 DRIVER = os.path.join(RAIZ, "harness", "driver", "target", "release", "catdriver.exe")
+TENTATIVAS = 3  # Emenda 7: execução que falha (foco perdido, app que não abre) é repetida
+# Emenda 8: validade das rodadas de medição (estado esporádico da máquina que atrasa a pintura)
+APPS_REGRA = ("electron", "tauri", "avalonia")
+LIMITE_M1_MS = 9.5
+CODIGO_INVALIDA = 4
 COLS = ["rodada", "app", "perfil", "documento", "repeticao", "aquecimento", "metrica", "passo", "valor_ms", "entrada_ms"]
 
 
@@ -74,7 +79,9 @@ def main():
     ambiente.json.dump(ambiente.coletar(a.perfil, {k: v["versao"] for k, v in cands.items()}), open(os.path.join(out, "ambiente.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     rng = random.Random(a.semente)
     ordens = []
-    meta = {"semente": a.semente, "commit": git("rev-parse", "HEAD"), "arvore_suja": bool(git("status", "--porcelain")), "doc": a.doc, "perfil": a.perfil, "reps": a.reps, "roteiro": a.roteiro, "gpu": a.gpu, "tmx": a.tmx, "docs_ciclo": a.docs_ciclo, "ordens": ordens}
+    medicao = os.path.basename(a.roteiro) == "medicao.json"
+    falhas, incompletas = [], []
+    meta = {"semente": a.semente, "commit": git("rev-parse", "HEAD"), "arvore_suja": bool(git("status", "--porcelain")), "doc": a.doc, "perfil": a.perfil, "reps": a.reps, "roteiro": a.roteiro, "gpu": a.gpu, "tmx": a.tmx, "docs_ciclo": a.docs_ciclo, "ordens": ordens, "falhas": falhas, "completa": False, "animacao": medicao}
     gk = None
     if a.gpu:
         exes = [e for c in cands.values() for e in c.get("exes_gpu", [])]
@@ -84,43 +91,60 @@ def main():
     w = csv.DictWriter(f, fieldnames=COLS)
     if novo:
         w.writeheader()
+    anim = None
     try:
+        if medicao:  # Emenda 9: tela com redesenho contínuo
+            anim = subprocess.Popen([sys.executable, "-I", os.path.join(RAIZ, "harness", "animador.py")])
+            time.sleep(3)
         for rep in range(1, a.reps + 1):
             ordem = list(cands)
             rng.shuffle(ordem)
             ordens.append(ordem)
             for nome in ordem:
                 d = os.path.join(out, nome, f"rep{rep:02d}")
-                os.makedirs(d, exist_ok=True)
                 app_csv = os.path.join(d, "app.csv")
-                if os.path.exists(app_csv):
-                    os.remove(app_csv)
-                cmd = [c.replace("{doc}", os.path.abspath(os.path.join(RAIZ, a.doc))).replace("{out}", app_csv) for c in cands[nome]["cmd"]]
-                cmd[0] = os.path.abspath(os.path.join(RAIZ, cmd[0]))
-                if a.tmx:
-                    cmd += ["--tmx", os.path.abspath(os.path.join(RAIZ, a.tmx))]
-                if a.docs_ciclo:
-                    cmd += ["--docs", ";".join(os.path.abspath(os.path.join(RAIZ, x)) for x in a.docs_ciclo.split(";"))]
-                dr = [DRIVER, "--roteiro", os.path.join(RAIZ, a.roteiro), "--saida", os.path.join(d, "driver.csv"), "--espera-csv", app_csv, "--perfil", a.perfil]
-                if a.memoria_cada:
-                    dr += ["--memoria-cada", a.memoria_cada]
-                print(f"[rep {rep}/{a.reps}] {nome} ...", flush=True)
-                pm = None
-                if a.presentmon:
-                    pm = subprocess.Popen([PRESENTMON, "--output_file", os.path.join(d, "presentmon.csv"), "--no_console_stats", "--date_time", "--stop_existing_session", "--session_name", "catstudy"], cwd=RAIZ, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-                    time.sleep(2)
-                    if pm.poll() is not None:
-                        print("  PresentMon não iniciou:", pm.stdout.read().strip()[:300])
-                        pm = None
-                r = subprocess.run(dr + ["--"] + cmd, cwd=RAIZ, capture_output=True, text=True)
-                if pm is not None:
-                    pm.terminate()
-                    try:
-                        pm.wait(10)
-                    except Exception:
-                        pm.kill()
+                for tentativa in range(1, TENTATIVAS + 1):
+                    if anim is not None and anim.poll() is not None:
+                        sys.exit("animador encerrou (Emenda 9); rodada abortada")
+                    os.makedirs(d, exist_ok=True)
+                    if os.path.exists(app_csv):
+                        os.remove(app_csv)
+                    cmd = [c.replace("{doc}", os.path.abspath(os.path.join(RAIZ, a.doc))).replace("{out}", app_csv) for c in cands[nome]["cmd"]]
+                    cmd[0] = os.path.abspath(os.path.join(RAIZ, cmd[0]))
+                    if a.tmx:
+                        cmd += ["--tmx", os.path.abspath(os.path.join(RAIZ, a.tmx))]
+                    if a.docs_ciclo:
+                        cmd += ["--docs", ";".join(os.path.abspath(os.path.join(RAIZ, x)) for x in a.docs_ciclo.split(";"))]
+                    dr = [DRIVER, "--roteiro", os.path.join(RAIZ, a.roteiro), "--saida", os.path.join(d, "driver.csv"), "--espera-csv", app_csv, "--perfil", a.perfil]
+                    if a.memoria_cada:
+                        dr += ["--memoria-cada", a.memoria_cada]
+                    print(f"[rep {rep}/{a.reps}] {nome} ...", flush=True)
+                    pm = None
+                    if a.presentmon:
+                        pm = subprocess.Popen([PRESENTMON, "--output_file", os.path.join(d, "presentmon.csv"), "--no_console_stats", "--date_time", "--stop_existing_session", "--session_name", "catstudy"], cwd=RAIZ, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                        time.sleep(2)
+                        if pm.poll() is not None:
+                            print("  PresentMon não iniciou:", pm.stdout.read().strip()[:300])
+                            pm = None
+                    r = subprocess.run(dr + ["--"] + cmd, cwd=RAIZ, capture_output=True, text=True)
+                    if pm is not None:
+                        pm.terminate()
+                        try:
+                            pm.wait(10)
+                        except Exception:
+                            pm.kill()
+                    if r.returncode == 0:
+                        break
+                    erro = (r.stderr or r.stdout).strip()[-300:]
+                    print(f"  FALHOU (tentativa {tentativa}/{TENTATIVAS}): {erro}", flush=True)
+                    falhas.append({"app": nome, "repeticao": rep, "tentativa": tentativa, "hora": time.strftime("%Y-%m-%d %H:%M:%S"), "erro": erro})
+                    guarda = os.path.join(out, "_falhas", f"{nome}_rep{rep:02d}_t{tentativa}")
+                    shutil.rmtree(guarda, ignore_errors=True)
+                    os.makedirs(os.path.dirname(guarda), exist_ok=True)
+                    time.sleep(60)
+                    shutil.move(d, guarda)  # a tentativa que falhou fica guardada, fora da análise
                 if r.returncode != 0:
-                    print("  FALHOU:", (r.stderr or r.stdout).strip()[:300])
+                    incompletas.append(f"{nome} rep{rep:02d}")
                     continue
                 linhas, sem = juntar(os.path.join(d, "driver.csv"), app_csv)
                 for x in linhas:
@@ -128,12 +152,26 @@ def main():
                 f.flush()
                 if sem:
                     print("  teclas sem resposta:", {f"{k[0]}/{k[1]}": v for k, v in sem.items()})
+                m1 = [x["ponta_a_ponta_ms"] for x in linhas if x["metrica"] == "M1"]
+                if medicao and rep > 1 and nome in APPS_REGRA and m1 and statistics.median(m1) > LIMITE_M1_MS:
+                    meta["invalida"] = {"app": nome, "repeticao": rep, "m1_p50_ms": round(statistics.median(m1), 2), "hora": time.strftime("%Y-%m-%d %H:%M:%S")}
+                    break
                 time.sleep(a.pausa)
+            if "invalida" in meta:
+                break
+        meta["completa"] = not incompletas and "invalida" not in meta
     finally:
         f.close()
+        if anim is not None:
+            anim.kill()
         if gk:
             gpu_restaurar(*gk)
         json.dump(meta, open(os.path.join(out, "rodada.json"), "w", encoding="utf-8"), indent=2)
+    if "invalida" in meta:
+        print("rodada inválida (Emenda 8):", meta["invalida"])
+        sys.exit(CODIGO_INVALIDA)
+    if incompletas:
+        sys.exit("rodada incompleta: " + ", ".join(incompletas))
     print("pronto:", out)
 
 

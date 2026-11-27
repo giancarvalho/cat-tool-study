@@ -1,0 +1,15 @@
+{
+  "semente": 1,
+  "commit": "1135b416d3e66a1f37e1c054ca34f8f33c0bda7a",
+  "arvore_suja": true,
+  "doc": "corpus/out/pequeno.docx",
+  "perfil": "completo",
+  "reps": 1,
+  "roteiro": "spec/roteiros/rolagem.json",
+  "gpu": "",
+  "ordens": [
+    [
+      "avalonia"
+    ]
+  ]
+}

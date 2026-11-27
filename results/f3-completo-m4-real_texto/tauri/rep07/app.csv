@@ -1,0 +1,2 @@
+run_id,app,metrica,passo,t_recebe_us,t_editor_us,t_previa_us,t_core_us,valor,unidade,erro
+51836,tauri,M5,abrir,1795684542905400,,,,112.5,ms,real_texto.docx

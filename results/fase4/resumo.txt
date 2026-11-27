@@ -1,0 +1,39 @@
+memória M7 mediana 20-60 min (MB): {'electron': 328.7, 'tauri': 330.0, 'avalonia': 221.0, 'flutter': 710.3}
+memória m7_max (MB): {'electron': 355.6, 'tauri': 353.8, 'avalonia': 250.1, 'flutter': 859.2}
+memória aberto (MB): {'electron': 271.3, 'tauri': 264.9, 'avalonia': 214.9, 'flutter': 339.0}
+instalador (MB): {'electron': 110.6, 'tauri': 2.2, 'avalonia': 49.6, 'flutter': 9.7}
+desempenho   {'electron': 4.75, 'tauri': 4.75, 'avalonia': 4.86, 'flutter': 4.71}
+memoria      {'electron': 4, 'tauri': 4, 'avalonia': 5, 'flutter': 1}
+esforco      {'electron': 5, 'tauri': 5, 'avalonia': 5, 'flutter': 5}
+ecossistema  {'electron': 4, 'tauri': 3, 'avalonia': 4, 'flutter': 3}
+instalador   {'electron': 1, 'tauri': 5, 'avalonia': 1, 'flutter': 1}
+PRINCIPAL sem esforço e sem consistência (55 pontos): {'electron': 4.03, 'tauri': 4.19, 'avalonia': 4.38, 'flutter': 2.89}
+com esforço por linhas (72 pontos): {'electron': 4.26, 'tauri': 4.38, 'avalonia': 4.53, 'flutter': 3.38}
+memória com o Flutter corrigido (MB): {'electron': 328.7, 'tauri': 330.0, 'avalonia': 221.0, 'flutter': 381.9}
+desempenho principal | notas [4.75, 4.75, 4.86, 4.71] | totais [4.03, 4.19, 4.38, 2.89]
+desempenho dois_perfis | notas [4.75, 4.75, 4.91, 4.73] | totais [4.03, 4.19, 4.4, 2.89]
+desempenho pior_p95 | notas [4.75, 4.75, 4.75, 4.5] | totais [4.03, 4.19, 4.34, 2.8]
+desempenho m4_com_pequeno | notas [4.61, 4.61, 4.71, 4.71] | totais [3.97, 4.13, 4.32, 2.89]
+desempenho tela_parada_sem_m4 | notas [4.33, 4.25, 4.33, 4.42] | totais [3.86, 3.99, 4.17, 2.77]
+memoria principal | notas [4, 4, 5, 1] | totais [4.03, 4.19, 4.38, 2.89]
+memoria m7_maximo | notas [4, 4, 5, 1] | totais [4.03, 4.19, 4.38, 2.89]
+memoria doc_aberto | notas [4, 5, 5, 3] | totais [4.03, 4.5, 4.38, 3.5]
+memoria flutter_corrigido | notas [4, 4, 5, 4] | totais [4.03, 4.19, 4.38, 3.81]
+esforco fora | notas ['', '', '', ''] | totais [4.03, 4.19, 4.38, 2.89]
+esforco linhas | notas [5, 5, 5, 5] | totais [4.26, 4.38, 4.53, 3.38]
+ecossistema principal | notas [4, 3, 4, 3] | totais [4.03, 4.19, 4.38, 2.89]
+ecossistema tauri_com_bibliotecas_js | notas [4, 4, 4, 3] | totais [4.03, 4.39, 4.38, 2.89]
+60 combinações (sem o Flutter corrigido). Em primeiro: {'electron': 0, 'tauri': 36, 'avalonia': 24, 'flutter': 0}
+dentro de 10% do primeiro (empate técnico): {'electron': 45, 'tauri': 60, 'avalonia': 60, 'flutter': 0}
+[sem esforço] avalonia - tauri: 0.19 (4.3%); b só passa a frente se a nota de consistência for maior em mais de 0.37
+[sem esforço] avalonia - electron: 0.35 (8.0%); b só passa a frente se a nota de consistência for maior em mais de 0.69
+[sem esforço] avalonia - flutter: 1.49 (34.1%); b só passa a frente se a nota de consistência for maior em mais de 2.93
+[sem esforço] tauri - electron: 0.16 (3.9%); b só passa a frente se a nota de consistência for maior em mais de 0.32
+[sem esforço] tauri - flutter: 1.31 (31.1%); b só passa a frente se a nota de consistência for maior em mais de 2.56
+[sem esforço] electron - flutter: 1.14 (28.3%); b só passa a frente se a nota de consistência for maior em mais de 2.24
+[com esforço] avalonia - tauri: 0.14 (3.2%); b só passa a frente se a nota de consistência for maior em mais de 0.37
+[com esforço] avalonia - electron: 0.27 (5.9%); b só passa a frente se a nota de consistência for maior em mais de 0.69
+[com esforço] avalonia - flutter: 1.14 (25.2%); b só passa a frente se a nota de consistência for maior em mais de 2.93
+[com esforço] tauri - electron: 0.12 (2.9%); b só passa a frente se a nota de consistência for maior em mais de 0.32
+[com esforço] tauri - flutter: 1.00 (22.8%); b só passa a frente se a nota de consistência for maior em mais de 2.56
+[com esforço] electron - flutter: 0.87 (20.5%); b só passa a frente se a nota de consistência for maior em mais de 2.24

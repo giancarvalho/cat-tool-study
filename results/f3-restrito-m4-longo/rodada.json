@@ -1,0 +1,74 @@
+{
+  "semente": 20261135,
+  "commit": "9659d7b6cffa687c1d96ffbef232bd4464949717",
+  "arvore_suja": true,
+  "doc": "corpus/out/longo.docx",
+  "perfil": "restrito",
+  "reps": 10,
+  "roteiro": "spec/roteiros/rolagem.json",
+  "gpu": "integrada",
+  "tmx": "docs/translation memory",
+  "docs_ciclo": "",
+  "ordens": [
+    [
+      "avalonia",
+      "tauri",
+      "electron",
+      "flutter"
+    ],
+    [
+      "electron",
+      "avalonia",
+      "flutter",
+      "tauri"
+    ],
+    [
+      "flutter",
+      "avalonia",
+      "tauri",
+      "electron"
+    ],
+    [
+      "tauri",
+      "flutter",
+      "electron",
+      "avalonia"
+    ],
+    [
+      "tauri",
+      "flutter",
+      "electron",
+      "avalonia"
+    ],
+    [
+      "tauri",
+      "electron",
+      "flutter",
+      "avalonia"
+    ],
+    [
+      "electron",
+      "tauri",
+      "flutter",
+      "avalonia"
+    ],
+    [
+      "electron",
+      "avalonia",
+      "tauri",
+      "flutter"
+    ],
+    [
+      "avalonia",
+      "electron",
+      "flutter",
+      "tauri"
+    ],
+    [
+      "avalonia",
+      "flutter",
+      "tauri",
+      "electron"
+    ]
+  ]
+}

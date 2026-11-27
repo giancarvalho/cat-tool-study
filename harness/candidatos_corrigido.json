@@ -1,0 +1,16 @@
+{
+  "flutter": {
+    "versao": "flutter 3.50.1, build windows --release, fleather 1.28.0 com harness/patches/fleather-1.28.0.patch (Emenda 10)",
+    "cmd": [
+      "dist-pacotes/flutter-corrigido/catstudy.exe",
+      "--limpo",
+      "--doc",
+      "{doc}",
+      "--out",
+      "{out}"
+    ],
+    "exes_gpu": [
+      "dist-pacotes/flutter-corrigido/catstudy.exe"
+    ]
+  }
+}

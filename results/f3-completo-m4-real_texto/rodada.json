@@ -1,0 +1,76 @@
+{
+  "semente": 20261146,
+  "commit": "9659d7b6cffa687c1d96ffbef232bd4464949717",
+  "arvore_suja": true,
+  "doc": "corpus/real/real_texto.docx",
+  "perfil": "completo",
+  "reps": 10,
+  "roteiro": "spec/roteiros/rolagem.json",
+  "gpu": "nvidia",
+  "tmx": "docs/translation memory",
+  "docs_ciclo": "",
+  "ordens": [
+    [
+      "tauri",
+      "electron",
+      "flutter",
+      "avalonia"
+    ],
+    [
+      "flutter",
+      "tauri",
+      "electron",
+      "avalonia"
+    ],
+    [
+      "electron",
+      "tauri",
+      "avalonia",
+      "flutter"
+    ],
+    [
+      "tauri",
+      "avalonia",
+      "electron",
+      "flutter"
+    ],
+    [
+      "tauri",
+      "avalonia",
+      "flutter",
+      "electron"
+    ],
+    [
+      "tauri",
+      "electron",
+      "avalonia",
+      "flutter"
+    ],
+    [
+      "avalonia",
+      "tauri",
+      "electron",
+      "flutter"
+    ],
+    [
+      "flutter",
+      "avalonia",
+      "electron",
+      "tauri"
+    ],
+    [
+      "tauri",
+      "flutter",
+      "electron",
+      "avalonia"
+    ],
+    [
+      "tauri",
+      "flutter",
+      "electron",
+      "avalonia"
+    ]
+  ],
+  "falhas": [],
+  "completa": true
+}

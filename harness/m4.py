@@ -58,10 +58,10 @@ def analisar(pm_csv, drv_csv, hz=60.0):
     # (observado: -3 h nesta máquina). Calibra pelo primeiro quadro após o spawn e exige resto < 30 s.
     todas.sort(key=lambda x: x[0])
     ref = spawn[0] if spawn else ini[0]
-    resto0 = ref - todas[0][0]
-    horas = round(resto0 / 3.6e9)
+    horas = round((ref - todas[len(todas) // 2][0]) / 3.6e9)  # pela mediana: um quadro isolado com data antiga não conta
     desloc = horas * 3_600_000_000
-    resto = (resto0 - desloc) / 1e6
+    depois = [t for t, _ in todas if t + desloc >= ref - 2_000_000]
+    resto = (ref - depois[0] - desloc) / 1e6 if depois else float("inf")
     if abs(resto) > 30:
         raise SystemExit(f"não foi possível calibrar o relógio do PresentMon: resto {resto:.1f} s após deslocar {horas} h")
     saida = []

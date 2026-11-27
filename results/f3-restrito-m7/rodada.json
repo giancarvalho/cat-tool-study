@@ -1,0 +1,20 @@
+{
+  "semente": 20261132,
+  "commit": "9659d7b6cffa687c1d96ffbef232bd4464949717",
+  "arvore_suja": true,
+  "doc": "corpus/out/pequeno.docx",
+  "perfil": "restrito",
+  "reps": 1,
+  "roteiro": "spec/roteiros/uso_prolongado.json",
+  "gpu": "integrada",
+  "tmx": "docs/translation memory",
+  "docs_ciclo": "corpus/out/pequeno.docx;corpus/out/medio.docx;corpus/out/longo.docx",
+  "ordens": [
+    [
+      "tauri",
+      "electron",
+      "flutter",
+      "avalonia"
+    ]
+  ]
+}

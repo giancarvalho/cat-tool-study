@@ -66,7 +66,9 @@ def main():
     ap.add_argument("--so", default="electron,tauri,avalonia,flutter")
     ap.add_argument("--casos", default="tr2,tr3,tr4,tr5,tr6,tr7,tr9")
     ap.add_argument("--candidatos", default="harness/candidatos.json")
+    ap.add_argument("--saida", default="results/funcional")
     a = ap.parse_args()
+    base = os.path.join(RAIZ, a.saida)
     cands = json.load(open(os.path.join(RAIZ, a.candidatos), encoding="utf-8"))
     geral = {}
     for nome in a.so.split(","):
@@ -75,7 +77,7 @@ def main():
             rot = os.path.join(RAIZ, "spec", "roteiros", "func", caso + ".json")
             spec = json.load(open(rot, encoding="utf-8"))
             doc = spec["doc"]
-            d = os.path.join(RAIZ, "results", "funcional", nome, caso)
+            d = os.path.join(base, nome, caso)
             os.makedirs(d, exist_ok=True)
             app_csv = os.path.join(d, "app.csv")
             if os.path.exists(app_csv):
@@ -101,8 +103,8 @@ def main():
             print(f"{nome:9} {caso} {res[caso][0]:7} {res[caso][1]}", flush=True)
             time.sleep(3)
         geral[nome] = res
-        os.makedirs(os.path.join(RAIZ, "results", "funcional"), exist_ok=True)
-        json.dump(res, open(os.path.join(RAIZ, "results", "funcional", nome + ".json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        os.makedirs(base, exist_ok=True)
+        json.dump(res, open(os.path.join(base, nome + ".json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 
 main()

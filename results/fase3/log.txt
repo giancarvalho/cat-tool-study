@@ -1,0 +1,126 @@
+[23:02:37] início f3-restrito-medicao-pequeno
+[23:58:00] fim f3-restrito-medicao-pequeno (55.4 min) código 0
+
+[23:58:00] início f3-restrito-medicao-medio
+[02:00:42] início f3-restrito-medicao-medio
+[02:57:09] fim f3-restrito-medicao-medio (56.4 min) código 0
+
+[02:57:09] início f3-restrito-medicao-longo
+[03:54:03] fim f3-restrito-medicao-longo (56.9 min) código 0
+
+[03:54:03] início f3-restrito-medicao-pior_caso
+[04:56:13] fim f3-restrito-medicao-pior_caso (62.2 min) código 0
+
+[04:56:13] início f3-restrito-medicao-real_layout
+[05:51:45] fim f3-restrito-medicao-real_layout (55.5 min) código 0
+
+[05:51:45] início f3-restrito-medicao-real_texto
+[06:49:07] fim f3-restrito-medicao-real_texto (57.4 min) código 0
+
+[06:49:07] início f3-restrito-medicao-real_pptx
+[08:02:15] fim f3-restrito-medicao-real_pptx (73.1 min) código 0
+
+[08:02:15] início f3-restrito-m7
+[12:04:07] fim f3-restrito-m7 (241.9 min) código 0
+
+[12:04:07] início f3-restrito-m4-pequeno
+[12:27:39] fim f3-restrito-m4-pequeno (23.5 min) código 0
+
+[12:27:39] início f3-restrito-m4-medio
+[12:50:43] fim f3-restrito-m4-medio (23.1 min) código 0
+
+[12:50:43] início f3-restrito-m4-longo
+[13:13:50] fim f3-restrito-m4-longo (23.1 min) código 0
+
+[13:13:50] início f3-restrito-m4-pior_caso
+[13:37:44] fim f3-restrito-m4-pior_caso (23.9 min) código 0
+
+[13:37:44] início f3-restrito-m4-real_layout
+[14:00:41] fim f3-restrito-m4-real_layout (23.0 min) código 0
+
+[14:00:41] início f3-restrito-m4-real_texto
+[14:24:15] fim f3-restrito-m4-real_texto (23.6 min) código 0
+
+[14:24:15] início f3-restrito-m4-real_pptx
+[14:47:18] fim f3-restrito-m4-real_pptx (23.1 min) código 0
+
+[14:47:18] início f3-completo-medicao-pequeno
+[15:42:49] fim f3-completo-medicao-pequeno (55.5 min) código 0
+
+[15:42:49] início f3-completo-medicao-pior_caso
+[00:37:54] início f3-restrito-medicao-real_texto
+[01:34:57] fim f3-restrito-medicao-real_texto (57.0 min) código 0
+
+[01:34:57] início f3-restrito-m4-pior_caso
+[01:58:22] fim f3-restrito-m4-pior_caso (23.4 min) código 0
+
+[01:58:22] início f3-completo-medicao-pior_caso
+[03:02:56] fim f3-completo-medicao-pior_caso (64.6 min) código 0 | 1 tentativa(s) com falha: avalonia rep9
+
+[03:02:56] início f3-completo-medicao-real_texto
+[03:59:52] fim f3-completo-medicao-real_texto (56.9 min) código 0
+
+[03:59:52] início f3-completo-medicao-real_pptx
+[05:14:32] fim f3-completo-medicao-real_pptx (74.7 min) código 0
+
+[05:14:32] início f3-completo-m4-pequeno
+[05:37:33] fim f3-completo-m4-pequeno (23.0 min) código 0
+
+[05:37:33] início f3-completo-m4-pior_caso
+[06:01:07] fim f3-completo-m4-pior_caso (23.6 min) código 0
+
+[06:01:07] início f3-completo-m4-real_texto
+[06:24:15] fim f3-completo-m4-real_texto (23.1 min) código 0
+
+[06:24:15] início f3-completo-m4-real_pptx
+[06:47:20] fim f3-completo-m4-real_pptx (23.1 min) código 0
+
+[06:47:20] início f3-restrito-m7-flutter
+[07:47:53] fim f3-restrito-m7-flutter (60.6 min) código 0
+
+[12:17:08] início f3-restrito-medicao-real_texto
+[12:26:56] fim f3-restrito-medicao-real_texto (9.8 min) código 4
+[rep 1/10] flutter ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 1/10] electron ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 1/10] avalonia ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 1/10] tauri ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 2/10] electron ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 2/10] flutter ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 2/10] tauri ...
+  teclas sem resposta: {'mesclar/M6': 1}
+rodada inv�lida (Emenda 8): {'app': 'tauri', 'repeticao': 2, 'm1_p50_ms': 13.33, 'hora': '2026-11-26 12:26:56'}
+
+[12:26:56] f3-restrito-medicao-real_texto inválida (Emenda 8), tentativa 1/4: rodada inv�lida (Emenda 8): {'app': 'tauri', 'repeticao': 2, 'm1_p50_ms': 13.33, 'hora': '2026-11-26 12:26:56'}
+[12:41:56] início f3-restrito-medicao-real_texto
+[12:48:51] fim f3-restrito-medicao-real_texto (6.9 min) código 4
+[rep 1/10] flutter ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 1/10] electron ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 1/10] avalonia ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 1/10] tauri ...
+  teclas sem resposta: {'mesclar/M6': 1}
+[rep 2/10] electron ...
+  teclas sem resposta: {'mesclar/M6': 1}
+rodada inv�lida (Emenda 8): {'app': 'electron', 'repeticao': 2, 'm1_p50_ms': 12.45, 'hora': '2026-11-26 12:48:51'}
+
+[12:48:51] f3-restrito-medicao-real_texto inválida (Emenda 8), tentativa 2/4: rodada inv�lida (Emenda 8): {'app': 'electron', 'repeticao': 2, 'm1_p50_ms': 12.45, 'hora': '2026-11-26 12:48:51'}
+[13:35:35] início f3-restrito-medicao-real_texto
+[14:32:49] fim f3-restrito-medicao-real_texto (57.2 min) código 0
+
+[14:32:49] início f3-completo-medicao-pior_caso
+[15:35:21] fim f3-completo-medicao-pior_caso (62.5 min) código 0
+
+[15:35:21] início f3-completo-medicao-real_texto
+[16:32:18] fim f3-completo-medicao-real_texto (56.9 min) código 0
+
+[16:32:18] início f3-completo-medicao-real_pptx
+[17:46:33] fim f3-completo-medicao-real_pptx (74.2 min) código 0
+

@@ -4,7 +4,7 @@ Cobertura aprovada por Gian (2026-11-24): Restrito completo, Completo reduzido.
   - rolagem.json (M4, PresentMon): mesmos documentos de cada perfil;
   - uso_prolongado.json (M7, 60 min por candidato): só no Restrito.
 Sementes registradas: SEMENTE_BASE + índice do item. Candidatos: harness/candidatos_pacote.json (builds de produção).
-Uso: python -I harness/fase3.py [--listar] [--so-etapa restrito-medicao,restrito-m7,restrito-m4,completo-medicao,completo-m4] [--reps 10] [--pausa 15]
+Uso: python -I harness/fase3.py [--listar] [--so-etapa restrito-medicao,restrito-m7,restrito-m4,completo-medicao,completo-m4,restrito-m7-flutter] [--reps 10] [--pausa 15]
 Registro em results/fase3/ordem.json; log em results/fase3/log.txt."""
 import argparse, json, os, shutil, subprocess, sys, time
 
@@ -47,7 +47,16 @@ def plano(reps, pausa):
         add("completo-medicao", f"f3-completo-medicao-{d}", d, "completo", "spec/roteiros/medicao.json")
     for d in COMPLETO:
         add("completo-m4", f"f3-completo-m4-{d}", d, "completo", "spec/roteiros/rolagem.json", ["--presentmon"])
+    # Emenda 7: o M7 do Flutter é refeito; entra no fim para não mudar as sementes dos outros itens
+    add("restrito-m7-flutter", "f3-restrito-m7-flutter", "pequeno", "restrito", "spec/roteiros/uso_prolongado.json",
+        ["--docs-ciclo", ";".join(CICLO_M7), "--memoria-cada", "60", "--so", "flutter"])
+    itens[-1]["cmd"][itens[-1]["cmd"].index("--reps") + 1] = "1"
     return itens
+
+
+def completa(nome):
+    p = os.path.join(RAIZ, "results", nome, "rodada.json")
+    return os.path.exists(p) and json.load(open(p, encoding="utf-8")).get("completa", True)
 
 
 def main():
@@ -67,13 +76,19 @@ def main():
             print(i["etapa"], i["nome"], "semente", i["semente"])
         return
     log = open(os.path.join(RAIZ, "results", "fase3", "log.txt"), "a", encoding="utf-8")
-    for i in itens:
-        if os.path.exists(os.path.join(RAIZ, "results", i["nome"], "rodada.json")):
+    fila = list(itens)
+    invalidas = {}
+    while fila:
+        i = fila.pop(0)
+        if completa(i["nome"]):
             print("já feito:", i["nome"], flush=True)
             continue
         pasta = os.path.join(RAIZ, "results", i["nome"])
         if os.path.exists(pasta):
-            shutil.rmtree(pasta)  # rodada interrompida: recomeça do zero (evita linhas duplicadas)
+            # rodada interrompida ou incompleta: recomeça do zero; a anterior é guardada em results/_descartadas
+            destino = os.path.join(RAIZ, "results", "_descartadas")
+            os.makedirs(destino, exist_ok=True)
+            shutil.move(pasta, os.path.join(destino, i["nome"] + time.strftime("-%Y%m%d-%H%M%S")))
         t0 = time.time()
         msg = f"[{time.strftime('%H:%M:%S')}] início {i['nome']}"
         print(msg, flush=True)
@@ -82,8 +97,23 @@ def main():
         r = subprocess.run(i["cmd"], cwd=RAIZ, capture_output=True, text=True, encoding="utf-8", errors="replace")
         msg = f"[{time.strftime('%H:%M:%S')}] fim {i['nome']} ({(time.time() - t0) / 60:.1f} min) código {r.returncode}"
         print(msg, flush=True)
+        rj = os.path.join(pasta, "rodada.json")
+        if os.path.exists(rj):
+            fl = json.load(open(rj, encoding="utf-8")).get("falhas", [])
+            if fl:
+                msg += f" | {len(fl)} tentativa(s) com falha: " + "; ".join(f'{x["app"]} rep{x["repeticao"]}' for x in fl)
         log.write(msg + "\n" + (r.stdout[-1500:] if r.returncode else "") + (r.stderr[-800:] if r.returncode else "") + "\n")
         log.flush()
+        if r.returncode == 4:  # Emenda 8: rodada inválida; refeita inteira após 15 min, até 4 tentativas
+            n = invalidas[i["nome"]] = invalidas.get(i["nome"], 0) + 1
+            msg = f"[{time.strftime('%H:%M:%S')}] {i['nome']} inválida (Emenda 8), tentativa {n}/4: " + r.stdout.strip().splitlines()[-1]
+            print(msg, flush=True)
+            log.write(msg + "\n")
+            log.flush()
+            if n >= 4:
+                sys.exit("sequência parada: " + i["nome"] + " inválida 4 vezes")
+            time.sleep(15 * 60)
+            fila.insert(0, i)
     print("Fase 3 concluída (todas as etapas listadas).", flush=True)
 
 
